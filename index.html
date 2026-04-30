@@ -12,6 +12,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Giant Reach — Google & Meta Ads for Service Businesses</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <style>
   :root {
     --navy: #0a1628;
@@ -24,7 +25,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -35,7 +35,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     overflow-x: hidden;
   }
 
-  /* NAV */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -56,7 +55,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     color: var(--gold);
     letter-spacing: 0.04em;
   }
-
   .logo span { color: var(--white); }
 
   nav a {
@@ -68,7 +66,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     opacity: 0.7;
     transition: opacity 0.2s, color 0.2s;
   }
-
   nav a:hover { opacity: 1; color: var(--gold); }
 
   .nav-cta {
@@ -80,10 +77,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     opacity: 1 !important;
     transition: background 0.2s !important;
   }
-
   .nav-cta:hover { background: var(--gold-light) !important; }
 
-  /* HERO */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -92,18 +87,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     position: relative;
     overflow: hidden;
   }
-
   .hero::before {
     content: '';
     position: absolute;
-    top: -30%;
-    right: -10%;
-    width: 60vw;
-    height: 60vw;
+    top: -30%; right: -10%;
+    width: 60vw; height: 60vw;
     background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
     pointer-events: none;
   }
-
   .hero::after {
     content: '';
     position: absolute;
@@ -113,10 +104,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     opacity: 0.3;
   }
 
-  .hero-inner {
-    max-width: 800px;
-    animation: fadeUp 0.9s ease both;
-  }
+  .hero-inner { max-width: 800px; animation: fadeUp 0.9s ease both; }
 
   .eyebrow {
     font-size: 0.75rem;
@@ -128,13 +116,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     align-items: center;
     gap: 0.8rem;
   }
-
-  .eyebrow::before {
-    content: '';
-    width: 30px;
-    height: 1px;
-    background: var(--gold);
-  }
+  .eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--gold); }
 
   h1 {
     font-family: 'Playfair Display', serif;
@@ -144,11 +126,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     margin-bottom: 1.8rem;
     color: var(--white);
   }
-
-  h1 em {
-    font-style: normal;
-    color: var(--gold);
-  }
+  h1 em { font-style: normal; color: var(--gold); }
 
   .hero-sub {
     font-size: 1.1rem;
@@ -158,11 +136,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     margin-bottom: 2.5rem;
   }
 
-  .hero-actions {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
 
   .btn-primary {
     background: var(--gold);
@@ -179,11 +153,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     transition: background 0.2s, transform 0.2s;
     display: inline-block;
   }
-
-  .btn-primary:hover {
-    background: var(--gold-light);
-    transform: translateY(-2px);
-  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
 
   .btn-outline {
     border: 1px solid rgba(201,168,76,0.4);
@@ -196,18 +166,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     text-decoration: none;
     transition: border-color 0.2s, background 0.2s;
     display: inline-block;
+    background: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
   }
+  .btn-outline:hover { border-color: var(--gold); background: var(--gold-dim); }
 
-  .btn-outline:hover {
-    border-color: var(--gold);
-    background: var(--gold-dim);
-  }
-
-  /* STATS */
   .stats {
     padding: 4rem 5%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 0;
     border-top: 1px solid rgba(201,168,76,0.1);
     border-bottom: 1px solid rgba(201,168,76,0.1);
@@ -219,7 +187,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border-right: 1px solid rgba(201,168,76,0.1);
     animation: fadeUp 0.8s ease both;
   }
-
   .stat:last-child { border-right: none; }
 
   .stat-num {
@@ -230,7 +197,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     line-height: 1;
     margin-bottom: 0.4rem;
   }
-
   .stat-label {
     font-size: 0.8rem;
     letter-spacing: 0.12em;
@@ -238,10 +204,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     color: var(--gray);
   }
 
-  /* SECTION */
-  section {
-    padding: 6rem 5%;
-  }
+  section { padding: 6rem 5%; }
 
   .section-label {
     font-size: 0.72rem;
@@ -253,13 +216,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     align-items: center;
     gap: 0.8rem;
   }
-
-  .section-label::before {
-    content: '';
-    width: 24px;
-    height: 1px;
-    background: var(--gold);
-  }
+  .section-label::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
 
   h2 {
     font-family: 'Playfair Display', serif;
@@ -277,7 +234,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     margin-bottom: 3.5rem;
   }
 
-  /* SERVICES */
   .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -292,7 +248,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     position: relative;
     overflow: hidden;
   }
-
   .service-card::before {
     content: '';
     position: absolute;
@@ -301,7 +256,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     background: var(--gold);
     transition: width 0.4s ease;
   }
-
   .service-card:hover::before { width: 100%; }
   .service-card:hover { background: var(--navy-mid); }
 
@@ -313,40 +267,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     line-height: 1;
     margin-bottom: 1rem;
   }
+  .service-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.8rem; color: var(--white); }
+  .service-desc { font-size: 0.88rem; color: var(--gray); line-height: 1.65; }
 
-  .service-title {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 0.8rem;
-    color: var(--white);
-  }
+  .markets { background: var(--navy-mid); }
+  .markets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media (max-width: 700px) { .markets-grid { grid-template-columns: 1fr; } }
 
-  .service-desc {
-    font-size: 0.88rem;
-    color: var(--gray);
-    line-height: 1.65;
-  }
-
-  /* MARKETS */
-  .markets {
-    background: var(--navy-mid);
-  }
-
-  .markets-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-
-  @media (max-width: 700px) {
-    .markets-grid { grid-template-columns: 1fr; }
-  }
-
-  .market-card {
-    border: 1px solid rgba(201,168,76,0.2);
-    padding: 2.5rem;
-    position: relative;
-  }
+  .market-card { border: 1px solid rgba(201,168,76,0.2); padding: 2.5rem; position: relative; }
 
   .market-tag {
     display: inline-block;
@@ -359,120 +287,42 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     padding: 0.3rem 0.8rem;
     margin-bottom: 1.5rem;
   }
+  .market-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem; }
+  .market-niches { color: var(--gold); font-size: 0.85rem; margin-bottom: 1rem; font-weight: 500; }
+  .market-desc { font-size: 0.88rem; color: var(--gray); line-height: 1.65; margin-bottom: 1.5rem; }
+  .market-price { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+  .market-price span { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 300; color: var(--gray); letter-spacing: 0.1em; text-transform: uppercase; }
 
-  .market-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.8rem;
-  }
-
-  .market-niches {
-    color: var(--gold);
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
-    font-weight: 500;
-  }
-
-  .market-desc {
-    font-size: 0.88rem;
-    color: var(--gray);
-    line-height: 1.65;
-    margin-bottom: 1.5rem;
-  }
-
-  .market-price {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--gold);
-  }
-
-  .market-price span {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 300;
-    color: var(--gray);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  /* AUDIT */
   .audit {
     background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
     border-top: 1px solid rgba(201,168,76,0.15);
     border-bottom: 1px solid rgba(201,168,76,0.15);
   }
+  .audit-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  @media (max-width: 700px) { .audit-inner { grid-template-columns: 1fr; gap: 3rem; } }
 
-  .audit-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: center;
-  }
+  .audit-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+  .audit-list li { display: flex; align-items: flex-start; gap: 1rem; font-size: 0.9rem; color: var(--gray); line-height: 1.5; }
+  .audit-list li::before { content: '→'; color: var(--gold); flex-shrink: 0; font-size: 0.9rem; margin-top: 0.05rem; }
 
-  @media (max-width: 700px) {
-    .audit-inner { grid-template-columns: 1fr; gap: 3rem; }
-  }
-
-  .audit-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .audit-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    font-size: 0.9rem;
-    color: var(--gray);
-    line-height: 1.5;
-  }
-
-  .audit-list li::before {
-    content: '→';
-    color: var(--gold);
-    flex-shrink: 0;
-    font-size: 0.9rem;
-    margin-top: 0.05rem;
-  }
-
-  /* CTA */
   .cta-section {
     text-align: center;
     padding: 7rem 5%;
     position: relative;
     overflow: hidden;
   }
-
   .cta-section::before {
     content: '';
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 600px;
-    height: 600px;
+    width: 600px; height: 600px;
     background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
     pointer-events: none;
   }
+  .cta-section h2 { margin-bottom: 1rem; }
+  .cta-section p { color: var(--gray); font-size: 1rem; margin-bottom: 2.5rem; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.7; }
 
-  .cta-section h2 {
-    margin-bottom: 1rem;
-  }
-
-  .cta-section p {
-    color: var(--gray);
-    font-size: 1rem;
-    margin-bottom: 2.5rem;
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.7;
-  }
-
-  /* FOOTER */
   footer {
     padding: 2.5rem 5%;
     border-top: 1px solid rgba(201,168,76,0.12);
@@ -482,61 +332,85 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     flex-wrap: wrap;
     gap: 1rem;
   }
+  footer p { font-size: 0.8rem; color: var(--gray); }
+  footer a { color: var(--gold); text-decoration: none; font-size: 0.8rem; }
 
-  footer p {
-    font-size: 0.8rem;
-    color: var(--gray);
-  }
-
-  footer a {
-    color: var(--gold);
-    text-decoration: none;
-    font-size: 0.8rem;
-  }
-
-  /* ANIMATIONS */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
 
-  .fade-up.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* WHATSAPP FLOAT */
-  .wa-float {
+  /* ── FLOATING BUTTON STACK ── */
+  .float-stack {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    background: #25D366;
-    color: white;
-    width: 56px;
-    height: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+    z-index: 200;
+  }
+
+  .float-btn-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .float-label {
+    position: absolute;
+    right: 68px;
+    background: var(--navy-mid);
+    border: 1px solid rgba(201,168,76,0.25);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 0.35rem 0.8rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .float-btn-wrap:hover .float-label { opacity: 1; }
+
+  .float-btn {
+    width: 56px; height: 56px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
     transition: transform 0.2s;
-    z-index: 200;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .float-btn:hover { transform: scale(1.1); }
+  .float-btn svg { width: 26px; height: 26px; }
+
+  .float-btn.calendly-btn {
+    background: #006BFF;
+    box-shadow: 0 4px 20px rgba(0,107,255,0.4);
+  }
+  .float-btn.wa-btn {
+    background: #25D366;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
   }
 
-  .wa-float:hover { transform: scale(1.1); }
-
-  .wa-float svg { width: 28px; height: 28px; }
+  /* ── PRIVACY MODAL ── */
+  #privacy-modal { display: none; }
 
   @media (max-width: 600px) {
     nav a:not(.nav-cta) { display: none; }
     .stat { border-right: none; border-bottom: 1px solid rgba(201,168,76,0.1); }
+    .stats { grid-template-columns: 1fr; }
+    .float-label { display: none; }
   }
 </style>
 </head>
@@ -552,7 +426,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="#services">Services</a>
     <a href="#markets">Markets</a>
     <a href="#audit">Free Audit</a>
-    <a href="https://wa.me/2348140906548?text=Hi,%20I%20want%20a%20free%20ads%20audit" class="nav-cta">Get Free Audit</a>
+    <a href="https://wa.me/2349022193183?text=Hi,%20I%20want%20a%20free%20ads%20audit" class="nav-cta">Get Free Audit</a>
   </div>
 </nav>
 
@@ -563,18 +437,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <h1>We Help Service Businesses<br><em>Get Consistent,</em><br>High-Intent Leads.</h1>
     <p class="hero-sub">The Giant Reach handles everything — from audit to campaign management — so your pipeline stays full on a predictable monthly retainer.</p>
     <div class="hero-actions">
-      <a href="https://wa.me/2348140906548?text=Hi,%20I%20want%20a%20free%20ads%20audit" class="btn-primary">Get Your Free Audit</a>
+      <a href="https://calendly.com/thegiantreachmedia/15-minute-meeting" onclick="Calendly.initPopupWidget({url:'https://calendly.com/thegiantreachmedia/15-minute-meeting'});return false;" class="btn-primary">Book Your Free Audit</a>
       <a href="#services" class="btn-outline">See How It Works</a>
     </div>
   </div>
 </section>
 
-<!-- STATS -->
+<!-- STATS — 4+ Niches removed -->
 <div class="stats">
-  <div class="stat">
-    <div class="stat-num">4+</div>
-    <div class="stat-label">Niches Served</div>
-  </div>
   <div class="stat">
     <div class="stat-num">6</div>
     <div class="stat-label">Countries Covered</div>
@@ -648,7 +518,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="section-label">Free Audit</div>
       <h2>Find Out What Your Ads Are Really Doing</h2>
       <p class="section-intro" style="margin-bottom:2rem;">Most businesses we audit are losing 40–60% of their ad budget to irrelevant clicks, wrong keywords, or poor landing pages. We'll show you exactly what's happening in 15 minutes.</p>
-      <a href="https://wa.me/2348140906548?text=Hi,%20I%20want%20a%20free%20ads%20audit" class="btn-primary">Book Free Audit on WhatsApp</a>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="https://calendly.com/thegiantreachmedia/15-minute-meeting"
+           onclick="Calendly.initPopupWidget({url:'https://calendly.com/thegiantreachmedia/15-minute-meeting'});return false;"
+           class="btn-primary">Book Free Audit — Calendly</a>
+        <a href="https://wa.me/2349022193183?text=Hi,%20I%20want%20a%20free%20ads%20audit"
+           class="btn-outline" target="_blank" rel="noopener">Book via WhatsApp</a>
+      </div>
     </div>
     <div class="fade-up">
       <ul class="audit-list">
@@ -668,33 +544,159 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="section-label" style="justify-content:center;">Get Started</div>
   <h2>Ready to Stop<br><em style="color:var(--gold);font-style:normal;">Missing Leads?</em></h2>
   <p>Book a free 15-minute audit. We'll show you exactly what your ads are missing and what it's costing you.</p>
-  <a href="https://wa.me/2348140906548?text=Hi,%20I%20want%20a%20free%20ads%20audit" class="btn-primary">WhatsApp Opeyemi Now</a>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+    <a href="https://calendly.com/thegiantreachmedia/15-minute-meeting"
+       onclick="Calendly.initPopupWidget({url:'https://calendly.com/thegiantreachmedia/15-minute-meeting'});return false;"
+       class="btn-primary">Book on Calendly</a>
+    <a href="https://wa.me/2349022193183?text=Hi,%20I%20want%20a%20free%20ads%20audit"
+       class="btn-outline" target="_blank" rel="noopener">WhatsApp Opeyemi</a>
+  </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
   <div class="logo" style="font-size:1rem;">The Giant<span> Reach</span></div>
   <p>Google & Meta Ads Specialist — HVAC, Plumbing, Real Estate & Visa Niches</p>
-  <a href="mailto:hello@thegiantreach.com">hello@thegiantreach.com</a>
+  <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;">
+    <a href="mailto:hello@thegiantreach.com">hello@thegiantreach.com</a>
+    <button onclick="openPrivacy()"
+      style="background:none;border:none;cursor:pointer;color:var(--gray);font-size:0.8rem;font-family:'DM Sans',sans-serif;text-decoration:underline;text-underline-offset:3px;padding:0;transition:color 0.2s;"
+      onmouseover="this.style.color='var(--gold)'"
+      onmouseout="this.style.color='var(--gray)'">Privacy Policy</button>
+  </div>
 </footer>
 
-<!-- WhatsApp Float -->
-<a href="https://wa.me/2348140906548?text=Hi,%20I%20want%20a%20free%20ads%20audit" class="wa-float" target="_blank">
-  <svg viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-</a>
+<!-- FLOATING BUTTON STACK: Calendly above WhatsApp -->
+<div class="float-stack">
+  <div class="float-btn-wrap">
+    <span class="float-label">Book a Meeting</span>
+    <button class="float-btn calendly-btn"
+      onclick="Calendly.initPopupWidget({url:'https://calendly.com/thegiantreachmedia/15-minute-meeting'});return false;"
+      aria-label="Book a meeting on Calendly">
+      <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 4h-1V2h-2v2H8V2H6v2H5C3.9 4 3 4.9 3 6v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5z"/>
+      </svg>
+    </button>
+  </div>
+  <div class="float-btn-wrap">
+    <span class="float-label">Chat on WhatsApp</span>
+    <a href="https://wa.me/2349022193183?text=Hi,%20I%20want%20a%20free%20ads%20audit"
+      class="float-btn wa-btn"
+      target="_blank" rel="noopener"
+      aria-label="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24" fill="white">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+    </a>
+  </div>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div id="privacy-modal" style="position:fixed;inset:0;background:rgba(5,12,24,0.97);z-index:600;overflow-y:auto;padding:2rem 1rem;" onclick="if(event.target===this)closePrivacy()">
+  <div style="max-width:760px;margin:0 auto;background:var(--navy-mid);border:1px solid rgba(201,168,76,0.2);padding:3rem 3rem 2.5rem;position:relative;">
+    <button onclick="closePrivacy()" style="position:absolute;top:1.5rem;right:1.8rem;background:none;border:none;color:var(--gold);font-size:1.8rem;cursor:pointer;line-height:1;font-family:'DM Sans',sans-serif;">✕</button>
+    <div style="font-size:0.72rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:0.8rem;display:flex;align-items:center;gap:0.8rem;"><span style="display:inline-block;width:24px;height:1px;background:var(--gold);"></span>Legal</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;color:var(--white);margin-bottom:0.5rem;line-height:1.15;">Privacy Policy</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:2.5rem;letter-spacing:0.05em;">The Giant Reach &nbsp;·&nbsp; Last updated: April 2025</p>
+    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.12);margin-bottom:2.5rem;">
+    <div style="font-size:0.9rem;color:var(--gray);line-height:1.8;display:flex;flex-direction:column;gap:2rem;">
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">1. Who We Are</div>
+        <p>The Giant Reach is a performance digital marketing agency founded by Opeyemi Akinremi, based in Lagos, Nigeria. We operate at <strong style="color:var(--white);">thegiantreach.com</strong> and provide Google Ads and Meta Ads management services to service businesses globally.</p>
+        <p style="margin-top:0.6rem;">Privacy enquiries: <a href="mailto:hello@thegiantreach.com" style="color:var(--gold);text-decoration:none;">hello@thegiantreach.com</a></p>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">2. Information We Collect</div>
+        <p>When you interact with this site or contact us, we may collect:</p>
+        <ul style="margin-top:0.8rem;padding-left:1.2rem;display:flex;flex-direction:column;gap:0.5rem;">
+          <li><strong style="color:var(--white);">Contact info</strong> — name, phone, email, and business name via WhatsApp, Calendly, or email.</li>
+          <li><strong style="color:var(--white);">Communication data</strong> — messages sent through WhatsApp, email, or social media.</li>
+          <li><strong style="color:var(--white);">Usage data</strong> — anonymised browsing behaviour via Google Analytics and Google Tag Manager.</li>
+          <li><strong style="color:var(--white);">Cookies</strong> — small files that help us understand site usage. Disable in your browser settings at any time.</li>
+        </ul>
+        <p style="margin-top:0.8rem;">We do <strong style="color:var(--white);">not</strong> collect payment details or government IDs directly through this site.</p>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">3. How We Use Your Information</div>
+        <ul style="padding-left:1.2rem;display:flex;flex-direction:column;gap:0.5rem;">
+          <li>Respond to enquiries and deliver requested services.</li>
+          <li>Send relevant service information where you've expressed interest.</li>
+          <li>Improve website content and performance.</li>
+          <li>Comply with applicable legal obligations.</li>
+        </ul>
+        <p style="margin-top:0.8rem;">We will never sell, rent, or share your data with third parties for their marketing purposes.</p>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">4. Third-Party Services</div>
+        <ul style="padding-left:1.2rem;display:flex;flex-direction:column;gap:0.5rem;">
+          <li><strong style="color:var(--white);">WhatsApp (Meta)</strong> — governed by Meta's Privacy Policy.</li>
+          <li><strong style="color:var(--white);">Calendly</strong> — booking data handled under Calendly's Privacy Policy.</li>
+          <li><strong style="color:var(--white);">Google Analytics & Tag Manager</strong> — anonymised tracking. Opt out via <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" style="color:var(--gold);">Google's opt-out tool</a>.</li>
+          <li><strong style="color:var(--white);">Google Ads / Meta Ads</strong> — may set attribution cookies if you arrived via an ad.</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">5. Data Retention</div>
+        <p>We retain data only as long as necessary. Request deletion anytime: <a href="mailto:hello@thegiantreach.com" style="color:var(--gold);text-decoration:none;">hello@thegiantreach.com</a>.</p>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">6. Your Rights</div>
+        <ul style="padding-left:1.2rem;display:flex;flex-direction:column;gap:0.5rem;">
+          <li><strong style="color:var(--white);">Access</strong> — request a copy of data we hold about you.</li>
+          <li><strong style="color:var(--white);">Correction</strong> — request correction of inaccurate data.</li>
+          <li><strong style="color:var(--white);">Deletion</strong> — request erasure of your data.</li>
+          <li><strong style="color:var(--white);">Objection</strong> — object to processing for marketing.</li>
+          <li><strong style="color:var(--white);">Portability</strong> — request data in a machine-readable format.</li>
+        </ul>
+        <p style="margin-top:0.8rem;">Email <a href="mailto:hello@thegiantreach.com" style="color:var(--gold);text-decoration:none;">hello@thegiantreach.com</a> to exercise these rights. We respond within 30 days.</p>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">7. Cookies</div>
+        <p>This site uses cookies for experience enhancement and anonymous analytics. Continued use constitutes consent. Manage cookies in your browser settings.</p>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">8. Children's Privacy</div>
+        <p>This site is not directed at children under 13. Contact us immediately if you believe a child has submitted personal information.</p>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">9. Changes to This Policy</div>
+        <p>We may update this policy periodically. The "last updated" date reflects the most recent revision. Continued use constitutes acceptance.</p>
+      </div>
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">10. Contact</div>
+        <div style="margin-top:0.8rem;padding:1.2rem 1.5rem;border:1px solid rgba(201,168,76,0.2);background:rgba(10,22,40,0.5);display:inline-block;">
+          <p style="color:var(--white);font-weight:500;margin-bottom:0.3rem;">Opeyemi Akinremi — The Giant Reach</p>
+          <p>Lagos, Nigeria</p>
+          <p style="margin-top:0.4rem;"><a href="mailto:hello@thegiantreach.com" style="color:var(--gold);text-decoration:none;">hello@thegiantreach.com</a></p>
+        </div>
+      </div>
+    </div>
+    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.12);margin:2.5rem 0 1.5rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <p style="font-size:0.75rem;color:var(--gray);font-style:italic;">© 2025 The Giant Reach. All rights reserved.</p>
+      <button onclick="closePrivacy()" style="background:var(--gold);color:var(--navy);border:none;padding:0.75rem 1.8rem;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;" onmouseover="this.style.background='var(--gold-light)'" onmouseout="this.style.background='var(--gold)'">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Calendly widget JS -->
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
 <script>
-  // Scroll animations
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-      }
-    });
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.1 });
-
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-</script>
 
+  function openPrivacy() {
+    document.getElementById('privacy-modal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+  function closePrivacy() {
+    document.getElementById('privacy-modal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePrivacy(); });
+</script>
 </body>
 </html>
