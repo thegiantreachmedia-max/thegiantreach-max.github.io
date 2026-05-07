@@ -4,7 +4,7 @@
   <!-- HOMEPAGE -->
   <url>
     <loc>https://thegiantreach.com/</loc>
-    <lastmod>2025-05-02</lastmod>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -12,7 +12,7 @@
   <!-- ABOUT / FOUNDER PAGE -->
   <url>
     <loc>https://thegiantreach.com/opeyemi-akinremi.html</loc>
-    <lastmod>2025-05-02</lastmod>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -20,15 +20,23 @@
   <!-- SERVICE PAGE -->
   <url>
     <loc>https://thegiantreach.com/client-acquisition-system.html</loc>
-    <lastmod>2025-05-02</lastmod>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+
+  <!-- SEO BLOG — OPEYEMI IMMIGRATION SYSTEM -->
+  <url>
+    <loc>https://thegiantreach.com/opeyemi-akinremi-immigration-acquisition-system.html</loc>
+    <lastmod>2025-05-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <!-- BLOG POST 1 -->
   <url>
     <loc>https://thegiantreach.com/blog-what-is-client-acquisition-system.html</loc>
-    <lastmod>2025-05-02</lastmod>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -36,7 +44,7 @@
   <!-- BLOG POST 2 -->
   <url>
     <loc>https://thegiantreach.com/blog-why-ads-dont-work.html</loc>
-    <lastmod>2025-05-02</lastmod>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -44,7 +52,7 @@
   <!-- BLOG POST 3 -->
   <url>
     <loc>https://thegiantreach.com/blog-traffic-without-conversion.html</loc>
-    <lastmod>2025-05-02</lastmod>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -52,7 +60,7 @@
   <!-- PRIVACY POLICY -->
   <url>
     <loc>https://thegiantreach.com/privacy.html</loc>
-    <lastmod>2025-05-02</lastmod>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
