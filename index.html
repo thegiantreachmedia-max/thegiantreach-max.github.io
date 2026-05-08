@@ -303,7 +303,7 @@ footer{padding:2.5rem 5%;border-top:1px solid rgba(201,168,76,0.08);display:flex
 .cal-float-tip{position:absolute;right:62px;top:50%;transform:translateY(-50%);background:var(--navy-mid);border:1px solid rgba(201,168,76,0.2);color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;padding:0.28rem 0.7rem;opacity:0;pointer-events:none;transition:opacity 0.2s;}
 .cal-float-wrap:hover .cal-float-tip{opacity:1;}
 
-@media(max-width:600px){
+@media(max-width:600px){.logo-text{font-size:0.95rem!important;}.logo-tagline{display:none;}
   .wa-chat-window{width:calc(100vw - 3.6rem);}
   .cal-float-tip,.wa-notification-dot{display:none;}
 }
@@ -330,7 +330,10 @@ footer{padding:2.5rem 5%;border-top:1px solid rgba(201,168,76,0.08);display:flex
 <!-- NAV -->
 <nav>
   <a href="index.html" class="logo-wrap">
-    <img src="logo.webp" alt="The Giant Reach — Client Acquisition Systems" style="height:42px;width:auto;display:block;"/>
+    <div>
+      <div class="logo-text">The Giant<span> Reach</span></div>
+      <span class="logo-tagline">Immigration · Acquisition Systems</span>
+    </div>
   </a>
   <div class="nav-links">
     <a href="#how-it-works">System</a>
@@ -593,7 +596,7 @@ footer{padding:2.5rem 5%;border-top:1px solid rgba(201,168,76,0.08);display:flex
 <footer>
   <div class="footer-left">
     <a href="index.html" class="logo-wrap" style="margin-bottom:0.8rem;display:inline-flex;">
-      <img src="logo.webp" alt="The Giant Reach" style="height:38px;width:auto;display:block;"/>
+      
       <div>
         <div class="logo-text" style="font-size:1rem;">The Giant<span> Reach</span></div>
         <span class="logo-tagline">Immigration · Acquisition Systems</span>
