@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Giant Reach — Client Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&family=Epilogue:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --white: #ffffff;
+  --ink: #0a0b0d;
+  --ink2: #1a1d23;
+  --ink3: #2c3038;
+  --mid: #6b7280;
+  --light: #f4f5f7;
+  --light2: #eceef1;
+  --border: #e5e7eb;
+  --border2: #d1d5db;
+  --accent: #1a56db;
+  --accent2: #1e40af;
+  --accent-light: #eff6ff;
+  --accent-border: #bfdbfe;
+  --success: #059669;
+  --success-light: #ecfdf5;
+  --error: #dc2626;
+  --error-light: #fef2f2;
+  --warn: #d97706;
+  --warn-light: #fffbeb;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Epilogue', system-ui, sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.13);
+  --t: 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--white);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:58px;display:flex;align-items:center;padding:0 20px;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.logo img{height:30px;width:auto;}
+.logo-text{font-family:var(--font-display);font-size:16px;font-weight:800;color:var(--ink);letter-spacing:-0.3px;line-height:1.2;}
+.logo-sub{font-size:9px;color:var(--mid);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;}
+.topbar-right{display:flex;gap:8px;}
+.tbtn{padding:7px 16px;border-radius:6px;font-size:12.5px;font-family:var(--font-body);font-weight:600;cursor:pointer;transition:var(--t);border:1.5px solid var(--border2);background:none;color:var(--mid);}
+.tbtn:hover{border-color:var(--ink);color:var(--ink);}
+.tbtn.solid{background:var(--ink);border-color:var(--ink);color:white;}
+.tbtn.solid:hover{background:var(--ink2);}
+
+/* CONFIG BANNER */
+.cfg-banner{background:#fffbeb;border-bottom:2px solid #fcd34d;padding:9px 20px;font-size:12px;color:#92400e;display:none;align-items:center;gap:8px;flex-wrap:wrap;position:fixed;top:58px;left:0;right:0;z-index:99;}
+.cfg-banner strong{font-weight:700;}
+.cfg-banner a{color:var(--accent);text-decoration:underline;cursor:pointer;}
+
+/* PROGRESS */
+.prog-track{position:fixed;top:58px;left:0;right:0;z-index:98;height:3px;background:var(--border);display:none;}
+.prog-fill{height:100%;background:var(--ink);transition:width .5s cubic-bezier(.4,0,.2,1);}
+
+/* VIEWS */
+.view{display:none;padding-top:58px;min-height:100vh;}
+.view.active{display:block;}
+
+/* STEP DOTS */
+.step-track{display:flex;align-items:center;padding:22px 20px 0;max-width:680px;margin:0 auto;}
+.step-node{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#9ca3af;flex:1;transition:var(--t);}
+.step-node.cur{color:var(--ink);}
+.step-node.done{color:var(--success);}
+.step-circle{width:28px;height:28px;border-radius:50%;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:white;flex-shrink:0;transition:var(--t);}
+.step-node.cur .step-circle{border-color:var(--ink);background:var(--ink);color:white;}
+.step-node.done .step-circle{border-color:var(--success);background:var(--success);color:white;}
+.step-line{flex:1;height:2px;background:var(--border);min-width:8px;}
+.step-line.done{background:var(--success);}
+.step-lbl{display:none;}
+@media(min-width:480px){.step-lbl{display:inline;}}
+
+/* LAYOUT */
+.wrap{max-width:700px;margin:0 auto;padding:32px 20px 100px;}
+.wrap.wide{max-width:1100px;}
+
+/* HERO STRIP */
+.hero-strip{background:var(--ink);color:white;padding:60px 20px 52px;text-align:center;margin-top:58px;}
+.hero-strip .ey{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.45);font-weight:600;margin-bottom:14px;}
+.hero-strip h1{font-family:var(--font-display);font-size:clamp(28px,7vw,50px);font-weight:900;line-height:1.08;letter-spacing:-1px;color:white;margin-bottom:14px;}
+.hero-strip h1 em{font-style:italic;color:rgba(255,255,255,0.5);}
+.hero-strip p{font-size:15px;color:rgba(255,255,255,0.55);max-width:460px;margin:0 auto;}
+
+/* PAGE HEADER */
+.page-hero{padding:32px 0 0;margin-bottom:36px;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid);margin-bottom:12px;}
+.eyebrow span{width:18px;height:2px;background:var(--ink);display:inline-block;}
+.page-title{font-family:var(--font-display);font-size:clamp(26px,5.5vw,42px);font-weight:900;line-height:1.08;letter-spacing:-0.8px;color:var(--ink);margin-bottom:12px;}
+.page-title em{font-style:italic;}
+.page-sub{font-size:14.5px;color:var(--mid);max-width:500px;line-height:1.6;}
+
+/* PACKAGES */
+.pkg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:20px;margin-top:36px;}
+.pkg-card{background:white;border:2px solid var(--border);border-radius:var(--radius);padding:26px;cursor:pointer;transition:var(--t);position:relative;overflow:hidden;box-shadow:var(--shadow);}
+.pkg-card:hover{border-color:var(--ink);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.pkg-card.sel{border-color:var(--ink);box-shadow:0 0 0 3px rgba(10,11,13,0.1),var(--shadow-md);}
+.sel-badge{position:absolute;top:14px;right:14px;background:var(--ink);color:white;font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:20px;text-transform:uppercase;opacity:0;transition:var(--t);}
+.pkg-card.sel .sel-badge{opacity:1;}
+.pkg-num{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--mid);text-transform:uppercase;margin-bottom:12px;}
+.pkg-icon{font-size:30px;margin-bottom:12px;display:block;}
+.pkg-name{font-family:var(--font-display);font-size:17px;font-weight:800;color:var(--ink);margin-bottom:6px;line-height:1.2;letter-spacing:-0.3px;}
+.pkg-billing-tag{display:inline-flex;align-items:center;gap:4px;background:var(--accent-light);border:1px solid var(--accent-border);border-radius:4px;padding:2px 9px;font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px;letter-spacing:.3px;}
+.pkg-tagline{font-size:13px;color:var(--mid);margin-bottom:14px;line-height:1.5;}
+.pkg-div{border:none;border-top:1px solid var(--border);margin:12px 0;}
+.pkg-incs{margin-bottom:16px;}
+.pkg-inc{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink3);margin-bottom:5px;line-height:1.4;}
+.pkg-inc::before{content:'✓';color:var(--success);font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.pkg-outcome{background:var(--light);border-radius:var(--radius-sm);padding:10px 13px;font-size:12px;color:var(--ink3);border-left:3px solid var(--ink);margin-bottom:16px;line-height:1.5;}
+.pkg-price-row{margin-bottom:16px;}
+.pkg-price{font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--ink);letter-spacing:-.5px;line-height:1;}
+.pkg-upfront{font-size:12px;color:var(--accent);font-weight:600;margin-top:3px;}
+.pkg-note{font-size:11px;color:var(--mid);margin-top:2px;line-height:1.4;}
+.pkg-cta{width:100%;padding:11px;background:var(--ink);border:none;border-radius:var(--radius-sm);color:white;font-family:var(--font-body);font-size:13px;font-weight:700;cursor:pointer;transition:var(--t);}
+.pkg-cta:hover{background:var(--ink2);}
+.pkg-card.sel .pkg-cta{background:var(--accent);}
+
+/* SELECTED BAR */
+.sel-bar{display:flex;align-items:center;gap:13px;background:var(--light);border:1.5px solid var(--border);border-radius:var(--radius);padding:13px 17px;margin-bottom:26px;}
+.sel-bar-ico{font-size:22px;}
+.sel-bar-info{flex:1;}
+.sel-bar-name{font-weight:700;font-size:14px;color:var(--ink);}
+.sel-bar-price{font-size:12px;color:var(--mid);margin-top:1px;}
+.sel-bar-change{font-size:12px;color:var(--accent);cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:2px;}
+
+/* BANK CARD */
+.bank-card{background:var(--ink);color:white;border-radius:var(--radius);padding:28px;margin-bottom:20px;}
+.bank-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:600;margin-bottom:5px;}
+.bank-val{font-family:var(--font-display);font-size:17px;font-weight:800;color:white;display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.bank-val.amount{font-size:28px;color:#fbbf24;}
+.bank-sub{font-size:11.5px;color:rgba(255,255,255,0.4);margin-top:-10px;margin-bottom:4px;}
+.bank-sep{border:none;border-top:1px solid rgba(255,255,255,0.1);margin:16px 0;}
+.cbtn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.65);border-radius:4px;padding:3px 9px;font-size:11px;cursor:pointer;transition:var(--t);font-family:var(--font-body);}
+.cbtn:hover{background:rgba(255,255,255,0.22);color:white;}
+
+/* NOTICE */
+.notice{border-radius:var(--radius-sm);padding:13px 16px;font-size:13px;line-height:1.55;margin-bottom:20px;}
+.notice.warn{background:var(--warn-light);border:1px solid #fcd34d;color:#92400e;}
+.notice.info{background:var(--accent-light);border:1px solid var(--accent-border);color:#1e3a8a;}
+.notice.ok{background:var(--success-light);border:1px solid #a7f3d0;color:#065f46;}
+.notice strong{font-weight:700;}
+
+/* UPLOAD */
+.ubox{border:2px dashed var(--border2);border-radius:var(--radius);padding:36px 20px;text-align:center;cursor:pointer;transition:var(--t);background:white;}
+.ubox:hover,.ubox.over{border-color:var(--ink);background:var(--light);}
+.ubox input{display:none;}
+.u-ico{font-size:30px;margin-bottom:9px;}
+.u-title{font-weight:700;font-size:14px;color:var(--ink);margin-bottom:3px;}
+.u-sub{font-size:12px;color:var(--mid);}
+.file-prev{display:none;align-items:center;gap:10px;background:var(--light);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 15px;margin-top:10px;}
+.fp-ico{font-size:18px;}
+.fp-name{flex:1;font-size:13px;color:var(--ink);font-weight:500;}
+.fp-rm{background:none;border:none;color:var(--error);cursor:pointer;font-size:15px;}
+
+/* FORM */
+.fsec{margin-bottom:28px;}
+.fsec-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--border);margin-bottom:16px;}
+.fgrid{display:grid;grid-template-columns:1fr;gap:13px;}
+@media(min-width:500px){.fgrid.two{grid-template-columns:1fr 1fr;}}
+.ff{display:flex;flex-direction:column;gap:5px;}
+.fl{font-size:11.5px;font-weight:600;color:var(--ink3);letter-spacing:.2px;}
+.fl sup{color:var(--error);}
+.fi,.fs,.ft{background:white;border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:10px 13px;color:var(--ink);font-family:var(--font-body);font-size:14px;outline:none;transition:var(--t);width:100%;appearance:none;}
+.fi::placeholder,.ft::placeholder{color:#9ca3af;}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(10,11,13,0.07);}
+.fi:disabled{background:var(--light);color:var(--mid);cursor:default;}
+.fs{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px;cursor:pointer;}
+.fs option{background:white;color:var(--ink);}
+.ft{min-height:86px;resize:vertical;line-height:1.55;}
+.rpill{display:flex;align-items:center;gap:6px;border:1.5px solid var(--border2);border-radius:6px;padding:8px 14px;cursor:pointer;font-size:13px;transition:var(--t);color:var(--ink3);font-weight:500;}
+.rpill input[type=radio]{accent-color:var(--ink);}
+.rpill:has(input:checked){border-color:var(--ink);background:var(--light);color:var(--ink);}
+.radio-row{display:flex;flex-wrap:wrap;gap:8px;}
+.ck-item{display:flex;align-items:flex-start;gap:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 15px;cursor:pointer;transition:var(--t);}
+.ck-item:has(input:checked){border-color:var(--ink);background:#fafafa;}
+.ck-item input[type=checkbox]{accent-color:var(--ink);width:16px;height:16px;flex-shrink:0;margin-top:2px;cursor:pointer;}
+.ck-item label{font-size:13px;cursor:pointer;line-height:1.5;color:var(--ink3);}
+.ck-item label strong{color:var(--ink);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 24px;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;font-weight:700;cursor:pointer;transition:var(--t);border:none;letter-spacing:.2px;}
+.btn-ink{background:var(--ink);color:white;}
+.btn-ink:hover{background:var(--ink2);transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.btn-ink:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-out{background:white;border:1.5px solid var(--border2);color:var(--mid);}
+.btn-out:hover{border-color:var(--ink);color:var(--ink);}
+.btn-ok{background:var(--success);color:white;}
+.btn-ok:hover{background:#047857;}
+.btn-err{background:var(--error);color:white;}
+.btn-err:hover{background:#b91c1c;}
+.btn-full{width:100%;}
+.btn-sm{padding:7px 15px;font-size:13px;}
+.btn-row{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap;}
+
+/* CHIPS */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.chip::before{content:'●';font-size:8px;}
+.ch-pend{background:var(--warn-light);color:var(--warn);border:1px solid #fcd34d;}
+.ch-appr{background:var(--success-light);color:var(--success);border:1px solid #a7f3d0;}
+.ch-rej{background:var(--error-light);color:var(--error);border:1px solid #fca5a5;}
+.ch-ob{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-border);}
+
+/* STATUS PAGE */
+.status-pg{min-height:calc(100vh - 58px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;}
+.st-ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 22px;}
+.st-ring.pend{background:var(--warn-light);border:2px solid #fcd34d;}
+.st-ring.ok{background:var(--success-light);border:2px solid #6ee7b7;}
+.st-ring.rej{background:var(--error-light);border:2px solid #fca5a5;}
+.st-h{font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--ink);margin-bottom:10px;}
+.st-p{color:var(--mid);max-width:400px;margin:0 auto 22px;}
+
+/* ADMIN */
+.admin-top{background:var(--ink);color:white;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;}
+.admin-top-h{font-family:var(--font-display);font-size:20px;font-weight:900;}
+.admin-top-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;}
+.admin-tabs{display:flex;gap:4px;padding:14px 20px;border-bottom:2px solid var(--border);background:white;overflow-x:auto;}
+.atab{padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:var(--t);white-space:nowrap;background:none;border:1.5px solid transparent;color:var(--mid);font-family:var(--font-body);}
+.atab:hover{color:var(--ink);border-color:var(--border);}
+.atab.on{background:var(--ink);border-color:var(--ink);color:white;}
+.sub-list{padding:20px;display:flex;flex-direction:column;gap:14px;}
+.scard{background:white;border:1.5px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+.scard:hover{border-color:var(--border2);box-shadow:var(--shadow-md);}
+.scard-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+.scard-name{font-family:var(--font-display);font-weight:800;font-size:16px;}
+.scard-meta{font-size:12px;color:var(--mid);margin-top:2px;}
+.scard-details{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px;}
+.scard-d{font-size:12px;color:var(--mid);}
+.scard-d strong{color:var(--ink);font-weight:600;}
+.scard-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(10,11,13,0.6);backdrop-filter:blur(6px);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:white;border-radius:var(--radius);padding:28px;max-width:460px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+.modal-h{font-family:var(--font-display);font-size:20px;font-weight:900;margin-bottom:6px;}
+.modal-sub{font-size:13px;color:var(--mid);margin-bottom:20px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:84px;right:18px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{background:var(--ink);color:white;border-radius:var(--radius-sm);padding:11px 16px;font-size:13px;min-width:220px;max-width:320px;display:flex;align-items:center;gap:9px;box-shadow:var(--shadow-lg);pointer-events:all;animation:tin .28s ease;}
+.toast.ok{background:#064e3b;border-left:3px solid var(--success);}
+.toast.err{background:#7f1d1d;border-left:3px solid var(--error);}
+@keyframes tin{from{transform:translateX(110%);opacity:0;}to{transform:none;opacity:1;}}
+
+/* FLOATING WHATSAPP */
+.wa-btn{position:fixed;bottom:22px;right:20px;z-index:200;width:56px;height:56px;border-radius:50%;background:#25D366;color:white;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(37,211,102,0.4);text-decoration:none;transition:var(--t);animation:popIn .5s cubic-bezier(.34,1.56,.64,1) 1.2s both;}
+.wa-btn:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,0.5);}
+@keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.wa-tip{position:absolute;right:66px;top:50%;transform:translateY(-50%);background:var(--ink);color:white;font-size:12px;font-weight:600;padding:6px 12px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:var(--t);font-family:var(--font-body);}
+.wa-btn:hover .wa-tip{opacity:1;}
+.wa-tip::after{content:'';position:absolute;left:100%;top:50%;transform:translateY(-50%);border:5px solid transparent;border-left-color:var(--ink);}
+
+/* STEPS LOADER SPINNER */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.empty-st{text-align:center;padding:52px 20px;color:var(--mid);}
+.empty-st .ei{font-size:38px;margin-bottom:10px;}
+
+@media(max-width:460px){
+  .bank-val.amount{font-size:22px;}
+  .btn-row{flex-direction:column;}
+  .btn-row .btn{width:100%;}
+  .wrap{padding:24px 16px 80px;}
+}
+</style>
+</head>
+<body>
+<script>
+const CFG = {
+  // 1. Notion Integration Token
+  NOTION_TOKEN: 'ntn_b64269069954FH1sXZ6qhhUEUIL3sKLnkaBboqk99RH5Ja',
+
+  // 2. Your Notion Clients Database ID
+  NOTION_DB_ID: 'a26c9fb49ed24dbd8e54a22fd8006a44',
+
+  // 3. Resend API Key
+  RESEND_KEY: 're_T6yr41Hm_K6RshY19HKkpRt9McpH7Q9vT',
+
+  // 4. Your business emails
+  ADMIN_EMAIL: 'opeyemi@thegiantreach.com',
+
+  // 5. Your WhatsApp number
+  OWNER_WA: '2348140906548',
+
+  // 6. Admin password
+  ADMIN_PASS: 'Blue247$',
+
+  // 7. Bank details
+  BANK_NAME: 'Wema Bank',
+  ACCT_NAME: 'Monsurdeen Opeyemi Akinremi',
+  ACCT_NUM: '0447152452',
+
+  // 8. Extra emails
+  SUPPORT_EMAIL: 'thegiantreachmedia@gmail.com',
+
+  // 9. Ready for production
+  READY: true
+};
+</script>
+
+<!-- Config banner -->
+<div class="cfg-banner" id="cfgBanner">
+  ⚙️ <strong>One-time setup needed:</strong> Open this file and fill in your Notion token, database ID, and Resend key in the CFG block near the top.
+  <a onclick="document.getElementById('cfgBanner').style.display='none'">Dismiss</a>
+</div>
+
+<!-- Topbar -->
+<nav class="topbar">
+  <div class="logo" onclick="goTo(1)">
+    <img src="https://thegiantreach.com/logo.webp" alt="TGR"
+         onerror="this.style.display='none'"/>
+    <div>
+      <div class="logo-text">The Giant Reach</div>
+      <div class="logo-sub">Client Onboarding</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="tbtn solid" onclick="openAdminLogin()">Admin Panel</button>
+  </div>
+</nav>
+
+<!-- Progress -->
+<div class="prog-track" id="progTrack">
+  <div class="prog-fill" id="progFill" style="width:33%"></div>
+</div>
+<!-- Floating WhatsApp -->
+<a class="wa-btn" id="waFloat"
+   href="https://wa.me/2349022193183?text=I%20need%20your%20assistance%20with%20my%20onboarding"
+   target="_blank" rel="noopener">
+
+  <svg xmlns="http://www.w3.org/2000/svg"
+       width="28"
+       height="28"
+       viewBox="0 0 32 32"
+       fill="white">
+    <path d="M19.11 17.2c-.29-.14-1.7-.84-1.96-.94-.26-.1-.45-.14-.64.15-.19.29-.74.94-.91 1.13-.17.19-.34.22-.63.07-.29-.14-1.22-.45-2.32-1.43-.86-.77-1.44-1.72-1.61-2.01-.17-.29-.02-.45.13-.59.13-.13.29-.34.43-.5.14-.17.19-.29.29-.48.1-.19.05-.36-.02-.5-.07-.14-.64-1.54-.88-2.11-.23-.55-.47-.48-.64-.49l-.55-.01c-.19 0-.5.07-.76.36-.26.29-1 1-.97 2.44.02 1.44 1.04 2.82 1.18 3.02.14.19 2.04 3.11 4.95 4.36.69.3 1.23.48 1.65.62.69.22 1.31.19 1.8.12.55-.08 1.7-.69 1.94-1.35.24-.67.24-1.24.17-1.35-.07-.12-.26-.19-.55-.33z"/>
+    <path d="M16.01 3C8.83 3 3 8.82 3 16c0 2.54.74 5.01 2.13 7.13L3 29l6.06-2.09A12.94 12.94 0 0016.01 29C23.18 29 29 23.18 29 16S23.18 3 16.01 3zm0 23.67c-2.08 0-4.12-.56-5.91-1.62l-.42-.25-3.6 1.24 1.21-3.51-.27-.45A10.63 10.63 0 015.34 16c0-5.88 4.79-10.67 10.67-10.67 5.88 0 10.67 4.79 10.67 10.67 0 5.88-4.79 10.67-10.67 10.67z"/>
+  </svg>
+
+  <span class="wa-tip">Quick support</span>
+</a>
+
+<!-- Toast container -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+
+<!-- ═══════════════ VIEW: PACKAGES ═══════════════ -->
+<div class="view active" id="v-packages">
+  <div class="hero-strip">
+    <div class="ey">The Giant Reach · Client Onboarding</div>
+    <h1>Choose Your<br/><em>Acquisition System</em></h1>
+    <p>Each system is built for one specific problem and delivers one measurable outcome. Select yours to begin.</p>
+  </div>
+  <div class="wrap wide">
+    <div class="pkg-grid" id="pkgGrid"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════ VIEW: PAYMENT ═══════════════ -->
+<div class="view" id="v-payment">
+  <div id="st-pay" class="step-track"></div>
+  <div class="wrap">
+    <div class="page-hero">
+      <div class="eyebrow"><span></span> Step 2 of 4</div>
+      <h1 class="page-title">Bank Transfer<br/><em>Payment Details</em></h1>
+      <p class="page-sub">Transfer the exact upfront amount shown. Use your name or email as narration.</p>
+    </div>
+
+    <div id="selBar1"></div>
+
+    <div class="bank-card" id="bankCard">
+      <div class="bank-lbl">Bank</div>
+      <div class="bank-val" id="bc-bank"></div>
+      <div class="bank-lbl">Account Name</div>
+      <div class="bank-val" id="bc-acct"></div>
+      <div class="bank-lbl">Account Number</div>
+      <div class="bank-val" id="bc-num"></div>
+      <div class="bank-sep"></div>
+      <div class="bank-lbl">Amount to Transfer (Upfront)</div>
+      <div class="bank-val amount" id="bc-amt"></div>
+      <div class="bank-sub" id="bc-sub"></div>
+    </div>
+
+    <div class="notice warn">
+      <strong>⚠️ Important:</strong> Transfer the <strong>exact amount</strong> shown above. Once done, click below to upload your receipt.
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-out" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-ink" onclick="goTo(3)">I Have Made Payment →</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════ VIEW: RECEIPT ═══════════════ -->
+<div class="view" id="v-receipt">
+  <div id="st-rec" class="step-track"></div>
+  <div class="wrap">
+    <div class="page-hero">
+      <div class="eyebrow"><span></span> Step 3 of 4</div>
+      <h1 class="page-title">Upload Your<br/><em>Payment Receipt</em></h1>
+      <p class="page-sub">A clear screenshot or PDF of your bank transfer confirmation.</p>
+    </div>
+
+    <div id="selBar2"></div>
+
+    <div class="fsec">
+      <div class="fsec-title">📎 Receipt Upload</div>
+      <div class="ff">
+        <label class="fl">Payment Receipt <sup>*</sup></label>
+        <div class="ubox" id="uBox"
+             onclick="document.getElementById('rFile').click()"
+             ondragover="dOver(event)" ondrop="dDrop(event)" ondragleave="dLeave(event)">
+          <input type="file" id="rFile" accept="image/*,.pdf" onchange="onFile(this)"/>
+          <div id="uPH">
+            <div class="u-ico">📄</div>
+            <div class="u-title">Click or drag receipt here</div>
+            <div class="u-sub">PNG · JPG · PDF — max 10MB</div>
+          </div>
+          <div class="file-prev" id="uPrev">
+            <span class="fp-ico" id="fpIco">📄</span>
+            <span class="fp-name" id="fpName"></span>
+            <button class="fp-rm" onclick="rmFile(event)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fsec">
+      <div class="fsec-title">📝 Your Details</div>
+      <div class="fgrid two">
+        <div class="ff"><label class="fl">Full Name <sup>*</sup></label><input class="fi" id="r_name" type="text" placeholder="Your full name"/></div>
+        <div class="ff"><label class="fl">Email Address <sup>*</sup></label><input class="fi" id="r_email" type="email" placeholder="you@email.com"/></div>
+        <div class="ff"><label class="fl">WhatsApp Number <sup>*</sup></label><input class="fi" id="r_phone" type="tel" placeholder="+234 800 000 0000"/></div>
+        <div class="ff"><label class="fl">Transaction Reference <em style="font-style:normal;color:var(--mid);font-weight:400">(optional)</em></label><input class="fi" id="r_ref" type="text" placeholder="e.g. TXN-123456"/></div>
+      </div>
+    </div>
+
+    <div class="notice info">
+      <strong>🔍 What happens next:</strong> Our team reviews your receipt within 2–4 hours. Once confirmed, you'll receive an email with your personal onboarding link.
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-out" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-ink btn-full" onclick="submitPayment()" id="submitBtn">Submit Receipt →</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════ VIEW: PENDING ═══════════════ -->
+<div class="view" id="v-pending">
+  <div class="status-pg">
+    <div class="st-ring pend">⏳</div>
+    <h2 class="st-h">Receipt Submitted!</h2>
+    <p class="st-p">We received your receipt and will verify it within 2–4 hours. You'll get an email at <strong id="pEmail">—</strong> with your personal onboarding link.</p>
+    <div class="chip ch-pend" style="margin-bottom:18px;">Pending Verification</div>
+    <p style="font-size:13px;color:var(--mid);margin-bottom:18px;">Your reference: <strong id="pRef" style="color:var(--ink);">—</strong></p>
+    <a id="waQuick" href="#" target="_blank" rel="noopener" class="btn btn-ink btn-sm">💬 WhatsApp Opeyemi</a>
+  </div>
+</div>
+
+
+<!-- ═══════════════ VIEW: ONBOARDING ═══════════════ -->
+<div class="view" id="v-onboarding">
+  <div id="st-ob" class="step-track"></div>
+  <div class="wrap">
+    <div class="page-hero">
+      <div class="eyebrow"><span></span> Step 4 of 4 — Final Step</div>
+      <h1 class="page-title">Client<br/><em>Onboarding Form</em></h1>
+      <p class="page-sub">Fill in your business details carefully. This information is used to build your entire system.</p>
+    </div>
+
+    <div class="notice ok" style="margin-bottom:24px;">
+      ✅ <strong>Payment Confirmed.</strong> Complete this form to start your system setup immediately.
+    </div>
+
+    <!-- Business Details -->
+    <div class="fsec">
+      <div class="fsec-title">🏢 Business Details</div>
+      <div class="fgrid two">
+        <div class="ff"><label class="fl">Business Name <sup>*</sup></label><input class="fi" id="ob_biz" type="text" placeholder="Your company name"/></div>
+        <div class="ff"><label class="fl">Contact Person <sup>*</sup></label><input class="fi" id="ob_person" type="text" placeholder="Full name"/></div>
+        <div class="ff"><label class="fl">Email Address <sup>*</sup></label><input class="fi" id="ob_email" type="email" placeholder="business@email.com"/></div>
+        <div class="ff"><label class="fl">WhatsApp Number <sup>*</sup></label><input class="fi" id="ob_phone" type="tel" placeholder="+234 800 000 0000"/></div>
+        <div class="ff">
+          <label class="fl">Country <sup>*</sup></label>
+          <select class="fs" id="ob_country">
+            <option value="">Select country…</option>
+            <option>Nigeria</option><option>United Kingdom</option><option>United States</option>
+            <option>Canada</option><option>Australia</option><option>Ireland</option>
+            <option>Ghana</option><option>South Africa</option><option>Kenya</option><option>Other</option>
+          </select>
+        </div>
+        <div class="ff"><label class="fl">Selected System</label><input class="fi" id="ob_pkg" type="text" disabled/></div>
+      </div>
+    </div>
+
+    <!-- Service Details -->
+    <div class="fsec">
+      <div class="fsec-title">⚙️ Service Details</div>
+      <div class="fgrid">
+        <div class="ff"><label class="fl">Services You Offer <sup>*</sup></label><textarea class="ft" id="ob_services" placeholder="List your main services (e.g. visa application, immigration consulting, document processing…)"></textarea></div>
+        <div class="ff"><label class="fl">Priority Service <sup>*</sup></label><input class="fi" id="ob_priority" type="text" placeholder="Your single most important service to focus on"/></div>
+        <div class="ff">
+          <label class="fl">Price Range Per Client <sup>*</sup></label>
+          <select class="fs" id="ob_price">
+            <option value="">Select range…</option>
+            <option>Under ₦50,000</option><option>₦50,000 – ₦150,000</option>
+            <option>₦150,000 – ₦500,000</option><option>₦500,000 – ₦1,000,000</option>
+            <option>Above ₦1,000,000</option>
+            <option>USD $100 – $500</option><option>USD $500 – $2,000</option><option>USD $2,000+</option>
+          </select>
+        </div>
+        <div class="ff">
+          <label class="fl">Consultation Availability <sup>*</sup></label>
+          <div class="radio-row">
+            <label class="rpill"><input type="radio" name="consult" value="Yes"/> Yes, I do consultations</label>
+            <label class="rpill"><input type="radio" name="consult" value="No"/> No consultations</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Target Market -->
+    <div class="fsec">
+      <div class="fsec-title">🎯 Target Market</div>
+      <div class="fgrid">
+        <div class="ff"><label class="fl">Ideal Customer Description <sup>*</sup></label><textarea class="ft" id="ob_ideal" placeholder="Who is your ideal client? Age, situation, goals, pain points…"></textarea></div>
+        <div class="ff"><label class="fl">Target Countries <sup>*</sup></label><input class="fi" id="ob_countries" type="text" placeholder="e.g. Nigeria, UK, Canada"/></div>
+      </div>
+    </div>
+
+    <!-- Conversion Goal -->
+    <div class="fsec">
+      <div class="fsec-title">🏁 Primary Conversion Goal</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label class="rpill" style="width:100%"><input type="radio" name="conv" value="WhatsApp Chat"/> 💬 WhatsApp Chat</label>
+        <label class="rpill" style="width:100%"><input type="radio" name="conv" value="Booked Call"/> 📞 Booked Call</label>
+        <label class="rpill" style="width:100%"><input type="radio" name="conv" value="Paid Consultation"/> 💰 Paid Consultation</label>
+        <label class="rpill" style="width:100%"><input type="radio" name="conv" value="Application Submission"/> 📋 Application Submission</label>
+      </div>
+    </div>
+
+    <!-- Lead Qualification -->
+    <div class="fsec">
+      <div class="fsec-title">🔥 Lead Qualification Rules</div>
+      <div class="fgrid">
+        <div class="ff"><label class="fl">🔥 HOT Lead — Definition <sup>*</sup></label><textarea class="ft" id="ob_hot" placeholder="What signals make a lead HOT? (ready to pay, documents ready, under 3 months urgency…)"></textarea></div>
+        <div class="ff"><label class="fl">🌡️ WARM Lead — Definition <sup>*</sup></label><textarea class="ft" id="ob_warm" placeholder="What signals make a lead WARM? (interested, needs more info, budget unclear…)"></textarea></div>
+        <div class="ff"><label class="fl">🧊 COLD Lead — Definition <sup>*</sup></label><textarea class="ft" id="ob_cold" placeholder="What signals make a lead COLD? (just browsing, no urgency, no budget…)"></textarea></div>
+        <div class="ff"><label class="fl">🚫 Disqualified Lead Criteria <sup>*</sup></label><textarea class="ft" id="ob_disq" placeholder="When do you disqualify completely? (wrong country, no budget, fraudulent intent…)"></textarea></div>
+      </div>
+    </div>
+
+    <!-- Consent -->
+    <div class="fsec">
+      <div class="fsec-title">✅ Consent & Confirmation</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <label class="ck-item"><input type="checkbox" id="ck1"/><label for="ck1"><strong>Information Accuracy:</strong> All information provided is accurate and up to date.</label></label>
+        <label class="ck-item"><input type="checkbox" id="ck2"/><label for="ck2"><strong>Terms of Service:</strong> I agree to The Giant Reach's service terms and engagement process.</label></label>
+        <label class="ck-item"><input type="checkbox" id="ck3"/><label for="ck3"><strong>Privacy Policy:</strong> I consent to my data being stored and used for setup and communication.</label></label>
+        <label class="ck-item"><input type="checkbox" id="ck4"/><label for="ck4"><strong>Platform Access:</strong> I acknowledge I'll need to provide access to relevant platforms (ad accounts, CRM, etc.) during setup.</label></label>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ink btn-full" onclick="submitOnboarding()" id="obBtn">
+        🚀 Complete Onboarding & Start My Setup
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════ VIEW: COMPLETE ═══════════════ -->
+<div class="view" id="v-complete">
+  <div class="status-pg">
+    <div class="st-ring ok">🎉</div>
+    <h2 class="st-h">You're All Set!</h2>
+    <p class="st-p">Your onboarding is complete. The Giant Reach team will begin setting up your acquisition system within <strong>1 business day</strong>. Check your email for the confirmation.</p>
+
+    <div style="background:var(--light);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;max-width:380px;width:100%;margin:0 auto 24px;text-align:left;">
+      <p style="font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;margin-bottom:14px;">What happens next</p>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div style="display:flex;gap:11px;align-items:flex-start;font-size:13px;"><span style="background:var(--ink);color:white;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700;flex-shrink:0;">01</span><span>Confirmation email sent to your inbox</span></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;font-size:13px;"><span style="background:var(--ink);color:white;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700;flex-shrink:0;">02</span><span>Opeyemi reviews your onboarding details</span></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;font-size:13px;"><span style="background:var(--ink);color:white;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700;flex-shrink:0;">03</span><span>Access request sent for your platforms</span></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;font-size:13px;"><span style="background:var(--ink);color:white;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700;flex-shrink:0;">04</span><span>System build begins — timeline shared via WhatsApp</span></div>
+      </div>
+    </div>
+    <a id="waDone" href="#" target="_blank" rel="noopener" class="btn btn-ink">💬 Message Opeyemi on WhatsApp</a>
+  </div>
+</div>
+
+
+<!-- ═══════════════ VIEW: ADMIN ═══════════════ -->
+<div class="view" id="v-admin">
+  <div class="admin-top">
+    <div>
+      <div class="admin-top-h">Admin Panel</div>
+      <div class="admin-top-sub">The Giant Reach — Internal Dashboard</div>
+    </div>
+    <button class="btn btn-out btn-sm" onclick="exitAdmin()"
+            style="border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.65);">← Exit</button>
+  </div>
+  <div class="admin-tabs">
+    <button class="atab on" onclick="aTab('pending',this)">⏳ Pending <span id="pendBadge"></span></button>
+    <button class="atab" onclick="aTab('approved',this)">✅ Approved</button>
+    <button class="atab" onclick="aTab('rejected',this)">✕ Rejected</button>
+    <button class="atab" onclick="aTab('onboarded',this)">🎉 Onboarded</button>
+  </div>
+  <div class="sub-list" id="subList"></div>
+</div>
+
+
+<!-- ════ MODAL: Admin Login ════ -->
+<div class="overlay" id="m-login">
+  <div class="modal">
+    <div class="modal-h">Admin Access</div>
+    <div class="modal-sub">Enter your admin password to access the verification panel.</div>
+    <div class="ff">
+      <label class="fl">Password</label>
+      <input type="password" class="fi" id="adminPw" placeholder="Enter password"
+             onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-out" onclick="closeM('m-login')">Cancel</button>
+      <button class="btn btn-ink" onclick="doLogin()">Enter →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: Receipt ════ -->
+<div class="overlay" id="m-receipt">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-h" style="margin-bottom:16px;">Payment Receipt</div>
+    <div id="receiptBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-out" onclick="closeM('m-receipt')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: Reject ════ -->
+<div class="overlay" id="m-reject">
+  <div class="modal">
+    <div class="modal-h">Reject Submission?</div>
+    <div class="modal-sub">Optionally provide a reason.</div>
+    <div class="ff">
+      <label class="fl">Reason (optional)</label>
+      <textarea class="ft" id="rejectReason" placeholder="e.g. Receipt unclear, wrong amount…"></textarea>
+    </div>
+    <input type="hidden" id="rejectId"/>
+    <div class="modal-actions">
+      <button class="btn btn-out" onclick="closeM('m-reject')">Cancel</button>
+      <button class="btn btn-err" onclick="doReject()">Confirm Rejection</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: Onboarding Data ════ -->
+<div class="overlay" id="m-ob">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-h" style="margin-bottom:16px;">Onboarding Data</div>
+    <div id="obBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-out" onclick="closeM('m-ob')">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ══════════════════════════════════════════════
+//  PACKAGES DATA
+// ══════════════════════════════════════════════
+const PKGS = [
+  {
+    id:'crm', num:'01', icon:'🗂️',
+    name:'CRM & Lead Tracking System',
+    billingTag:'One-Time Setup',
+    tagline:'For businesses losing leads across WhatsApp, ads, and web with no central system.',
+    includes:['CRM setup (Notion/Sheets)','Lead tracking pipeline','WhatsApp lead routing','Follow-up system','Lead recovery structure'],
+    outcome:'Every lead captured, tracked, and easy to update through each stage of the sales journey.',
+    fullPrice:'₦50,000',
+    upfrontAmt:30000,
+    upfrontLabel:'₦30,000 upfront (60%)',
+    balanceLabel:'₦20,000 balance after delivery',
+    noteText:'60% upfront · Balance due after delivery · Extras outside deliverables: ₦5,000 each',
+    isRetainer:false
+  },
+  {
+    id:'traffic', num:'02', icon:'📈',
+    name:'Traffic & Conversion System',
+    billingTag:'Monthly Retainer',
+    tagline:'For businesses with weak or inconsistent traffic and low conversions from ad spend.',
+    includes:['Traffic source setup (Meta/Google/Organic)','Funnel structure (click → chat → conversion)','Landing page structure','Offer positioning','Conversion optimisation flow'],
+    outcome:'Clicks turn into real enquiries with a trackable, repeatable conversion flow.',
+    fullPrice:'₦85,000/month',
+    upfrontAmt:85000,
+    upfrontLabel:'₦85,000 first month upfront',
+    balanceLabel:'Ongoing monthly thereafter',
+    noteText:'First month upfront · Payment validates subscription & continuity · Ongoing support & reporting included',
+    isRetainer:true
+  },
+  {
+    id:'visibility', num:'03', icon:'👁️',
+    name:'Visibility & Lead Capture System',
+    billingTag:'One-Time Setup',
+    tagline:"For brands with low awareness and weak inbound leads who aren't being found by buyers.",
+    includes:['Visibility audit','Lead capture system setup','Funnel entry optimisation','CTA optimisation','Brand positioning improvements'],
+    outcome:'Your brand gets found by serious buyers — and they enquire without friction.',
+    fullPrice:'₦60,000',
+    upfrontAmt:36000,
+    upfrontLabel:'₦36,000 upfront (60%)',
+    balanceLabel:'₦24,000 balance after delivery',
+    noteText:'60% upfront · Balance due after delivery · Extras outside deliverables: ₦5,000 each',
+    isRetainer:false
+  },
+  {
+    id:'tracking', num:'04', icon:'📊',
+    name:'Tracking & Performance Intelligence',
+    billingTag:'Monthly Retainer',
+    tagline:'For businesses already getting clients but making decisions without data or clarity.',
+    includes:['Source tracking system','CPL tracking setup','Conversion tracking dashboard','Campaign performance visibility','Attribution system'],
+    outcome:'You know exactly which channel, ad, and message is generating clients every single month.',
+    fullPrice:'₦100,000/month',
+    upfrontAmt:100000,
+    upfrontLabel:'₦100,000 first month upfront',
+    balanceLabel:'Ongoing monthly thereafter',
+    noteText:'First month upfront · Ongoing monthly retainer · Full performance reporting included',
+    isRetainer:true
+  }
+];
+
+// ══════════════════════════════════════════════
+//  STATE & STORAGE
+// ══════════════════════════════════════════════
+const SK = 'tgr_v3';
+let S = { pkg:null, file:null, fileName:'', fileType:'', obId:null, adminTab:'pending' };
+
+const getSubs = () => { try{ return JSON.parse(localStorage.getItem(SK)||'[]'); }catch(e){ return []; } };
+const saveSubs = a => localStorage.setItem(SK, JSON.stringify(a));
+const uid = () => 'TGR-'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase();
+const addDays = (iso,n) => { const d=new Date(iso); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0]; };
+const fmtDate = iso => new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+const val = id => document.getElementById(id)?.value?.trim()||'';
+
+// ══════════════════════════════════════════════
+//  RENDER PACKAGES
+// ══════════════════════════════════════════════
+function renderPkgs() {
+  document.getElementById('pkgGrid').innerHTML = PKGS.map(p => `
+    <div class="pkg-card ${S.pkg?.id===p.id?'sel':''}" onclick="pickPkg('${p.id}')">
+      <div class="sel-badge">Selected ✓</div>
+      <div class="pkg-num">SYSTEM ${p.num}</div>
+      <span class="pkg-icon">${p.icon}</span>
+      <div class="pkg-name">${p.name}</div>
+      <div class="pkg-billing-tag">${p.billingTag}</div>
+      <div class="pkg-tagline">${p.tagline}</div>
+      <hr class="pkg-div"/>
+      <div class="pkg-incs">${p.includes.map(i=>`<div class="pkg-inc">${i}</div>`).join('')}</div>
+      <div class="pkg-outcome">${p.outcome}</div>
+      <div class="pkg-price-row">
+        <div class="pkg-price">${p.fullPrice}</div>
+        <div class="pkg-upfront">${p.upfrontLabel}</div>
+        <div class="pkg-note">${p.balanceLabel}</div>
+      </div>
+      <button class="pkg-cta">Start Setup →</button>
+    </div>`).join('');
+}
+
+function pickPkg(id) {
+  S.pkg = PKGS.find(p=>p.id===id);
+  renderPkgs();
+  setTimeout(()=>goTo(2), 200);
+}
+
+// ══════════════════════════════════════════════
+//  NAVIGATION & STEPS
+// ══════════════════════════════════════════════
+const STEPS = [{n:1,l:'Package'},{n:2,l:'Payment'},{n:3,l:'Receipt'},{n:4,l:'Onboarding'}];
+
+function buildSteps(cur, id) {
+  const el = document.getElementById(id); if(!el) return;
+  let h = '';
+  STEPS.forEach((s,i) => {
+    const cls = s.n<cur?'done':s.n===cur?'cur':'';
+    const lbl = s.n<cur?'✓':s.n;
+    if(i>0) h += `<div class="step-line ${s.n<=cur?'done':''}"></div>`;
+    h += `<div class="step-node ${cls}"><div class="step-circle">${lbl}</div><span class="step-lbl">${s.l}</span></div>`;
+  });
+  el.innerHTML = h;
+}
+
+function showV(name) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('v-'+name)?.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goTo(n) {
+  if(n>=2 && !S.pkg) { toast('Please select a system first.','err'); showV('packages'); return; }
+  const pt=document.getElementById('progTrack'), pf=document.getElementById('progFill');
+  if(n===1){ pt.style.display='none'; showV('packages'); return; }
+  pt.style.display='block';
+  pf.style.width=((n-1)/3*100)+'%';
+  if(n===2){ buildSteps(2,'st-pay'); populatePayment(); showV('payment'); }
+  if(n===3){ buildSteps(3,'st-rec'); populateReceipt(); showV('receipt'); }
+  if(n===4){ buildSteps(4,'st-ob'); populateOnboarding(); showV('onboarding'); }
+}
+
+function selBarHTML(p) {
+  return `<div class="sel-bar"><span class="sel-bar-ico">${p.icon}</span>
+    <div class="sel-bar-info"><div class="sel-bar-name">${p.name}</div><div class="sel-bar-price">${p.upfrontLabel}</div></div>
+    <span class="sel-bar-change" onclick="goTo(1)">Change</span></div>`;
+}
+
+function populatePayment() {
+  const p=S.pkg;
+  document.getElementById('selBar1').innerHTML=selBarHTML(p);
+  document.getElementById('bc-bank').innerHTML=`${CFG.BANK_NAME} <button class="cbtn" onclick="cp('${CFG.BANK_NAME}')">Copy</button>`;
+  document.getElementById('bc-acct').innerHTML=`${CFG.ACCT_NAME} <button class="cbtn" onclick="cp('${CFG.ACCT_NAME}')">Copy</button>`;
+  document.getElementById('bc-num').innerHTML=`${CFG.ACCT_NUM} <button class="cbtn" onclick="cp('${CFG.ACCT_NUM}')">Copy</button>`;
+  document.getElementById('bc-amt').innerHTML=`₦${p.upfrontAmt.toLocaleString()} <button class="cbtn" onclick="cp('${p.upfrontAmt}')">Copy</button>`;
+  document.getElementById('bc-sub').textContent=p.noteText;
+}
+
+function populateReceipt() {
+  document.getElementById('selBar2').innerHTML=selBarHTML(S.pkg);
+}
+
+function populateOnboarding() {
+  const el=document.getElementById('ob_pkg');
+  if(el && S.pkg) el.value=S.pkg.name;
+}
+
+// ══════════════════════════════════════════════
+//  FILE UPLOAD
+// ══════════════════════════════════════════════
+function onFile(inp){ if(inp.files[0]) processFile(inp.files[0]); }
+function dOver(e){ e.preventDefault(); document.getElementById('uBox').classList.add('over'); }
+function dLeave(){ document.getElementById('uBox').classList.remove('over'); }
+function dDrop(e){
+  e.preventDefault(); document.getElementById('uBox').classList.remove('over');
+  if(e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
+}
+function processFile(f){
+  const ok=['image/png','image/jpeg','image/jpg','image/webp','application/pdf'];
+  if(!ok.includes(f.type)){ toast('Only PNG, JPG, or PDF allowed.','err'); return; }
+  if(f.size>10*1024*1024){ toast('File must be under 10MB.','err'); return; }
+  S.file=f; S.fileName=f.name; S.fileType=f.type;
+  document.getElementById('fpIco').textContent=f.type==='application/pdf'?'📄':'🖼️';
+  document.getElementById('fpName').textContent=f.name;
+  document.getElementById('uPH').style.display='none';
+  const pv=document.getElementById('uPrev'); pv.style.display='flex';
+}
+function rmFile(e){
+  e.stopPropagation();
+  S.file=null; S.fileName=''; S.fileType='';
+  document.getElementById('rFile').value='';
+  document.getElementById('uPH').style.display='block';
+  document.getElementById('uPrev').style.display='none';
+}
+
+// ══════════════════════════════════════════════
+//  SUBMIT RECEIPT
+// ══════════════════════════════════════════════
+function submitPayment(){
+  const name=val('r_name'),email=val('r_email'),phone=val('r_phone'),ref=val('r_ref');
+  if(!S.file){ toast('Please upload your receipt.','err'); return; }
+  if(!name){ toast('Please enter your full name.','err'); return; }
+  if(!email||!email.includes('@')){ toast('Please enter a valid email.','err'); return; }
+  if(!phone){ toast('Please enter your WhatsApp number.','err'); return; }
+
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Submitting…';
+
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const now=new Date().toISOString();
+    const sub={
+      id:uid(), status:'pending',
+      pkgId:S.pkg.id, pkgName:S.pkg.name,
+      pkgPrice:S.pkg.fullPrice, pkgUpfront:S.pkg.upfrontLabel,
+      isRetainer:S.pkg.isRetainer,
+      name, email, phone, ref,
+      receiptName:S.fileName, receiptData:ev.target.result, receiptType:S.fileType,
+      submittedAt:now,
+      approvedAt:null, subscribedAt:null, nextRenewal:null,
+      onboardingData:null, notionPageId:null
+    };
+    const subs=getSubs(); subs.push(sub); saveSubs(subs);
+
+    document.getElementById('pEmail').textContent=email;
+    document.getElementById('pRef').textContent=sub.id;
+    document.getElementById('waQuick').href=
+      `https://wa.me/${CFG.OWNER_WA}?text=Hi%20Opeyemi,%20I%20just%20submitted%20my%20receipt.%20Ref:%20${sub.id}`;
+
+    btn.disabled=false; btn.textContent='Submit Receipt →';
+    showV('pending');
+    document.getElementById('progTrack').style.display='none';
+    toast('Receipt submitted successfully!','ok');
+  };
+  reader.readAsDataURL(S.file);
+}
+
+// ══════════════════════════════════════════════
+//  SUBMIT ONBOARDING  ← Notion + Email + WhatsApp
+// ══════════════════════════════════════════════
+async function submitOnboarding(){
+  // Validate required fields
+  const reqs={ob_biz:'Business Name',ob_person:'Contact Person',ob_email:'Email',ob_phone:'WhatsApp Number',ob_country:'Country',ob_services:'Services',ob_priority:'Priority Service',ob_price:'Price Range',ob_ideal:'Ideal Customer',ob_countries:'Target Countries',ob_hot:'Hot Lead Definition',ob_warm:'Warm Lead Definition',ob_cold:'Cold Lead Definition',ob_disq:'Disqualified Lead Criteria'};
+  for(const [id,label] of Object.entries(reqs)){
+    const el=document.getElementById(id);
+    if(!el||!el.value.trim()){ toast(`Please fill in: ${label}`,'err'); el?.focus(); return; }
+  }
+  const conv=document.querySelector('input[name="conv"]:checked');
+  if(!conv){ toast('Please select a conversion goal.','err'); return; }
+  const consult=document.querySelector('input[name="consult"]:checked');
+  if(!consult){ toast('Please select consultation availability.','err'); return; }
+  if(!['ck1','ck2','ck3','ck4'].every(id=>document.getElementById(id).checked)){
+    toast('Please check all 4 consent boxes to proceed.','err'); return;
+  }
+
+  const btn=document.getElementById('obBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Saving your details…';
+
+  const now=new Date().toISOString();
+  const nextRenewal=addDays(now,30);
+
+  const data={
+    businessName:val('ob_biz'), contactPerson:val('ob_person'),
+    email:val('ob_email'), phone:val('ob_phone'), country:val('ob_country'),
+    package:S.pkg?.name||'', isRetainer:S.pkg?.isRetainer,
+    services:val('ob_services'), priorityService:val('ob_priority'),
+    priceRange:val('ob_price'), consultation:consult.value,
+    idealCustomer:val('ob_ideal'), targetCountries:val('ob_countries'),
+    conversionGoal:conv.value,
+    hotLead:val('ob_hot'), warmLead:val('ob_warm'),
+    coldLead:val('ob_cold'), disqualified:val('ob_disq'),
+    subscribedAt:now, nextRenewal
+  };
+
+  // Update local record
+  const subs=getSubs();
+  const sub=subs.find(s=>s.id===S.obId)||subs[subs.length-1];
+  if(sub){
+    sub.onboardingData=data; sub.status='onboarded';
+    sub.onboardedAt=now; sub.subscribedAt=now; sub.nextRenewal=nextRenewal;
+    saveSubs(subs);
+  }
+
+  // ── Notion ──
+  btn.innerHTML='<span class="spinner"></span> Saving to Notion CRM…';
+  try{ await pushNotion(data,sub); }
+  catch(e){ console.warn('Notion:',e.message); }
+
+  // ── Email + WhatsApp ──
+  btn.innerHTML='<span class="spinner"></span> Sending confirmations…';
+  try{ await sendAll(data); }
+  catch(e){ console.warn('Comms:',e.message); }
+
+  btn.disabled=false; btn.textContent='🚀 Complete Onboarding & Start My Setup';
+
+  document.getElementById('waDone').href=
+    `https://wa.me/${CFG.OWNER_WA}?text=Hi%20Opeyemi,%20I%20just%20completed%20my%20onboarding!%20Business:%20${encodeURIComponent(data.businessName)}`;
+
+  showV('complete');
+  document.getElementById('progTrack').style.display='none';
+  toast('Onboarding complete! 🎉','ok');
+}
+
+// ══════════════════════════════════════════════
+//  NOTION PUSH
+// ══════════════════════════════════════════════
+async function pushNotion(d, sub){
+  if(!CFG.NOTION_TOKEN||CFG.NOTION_TOKEN.includes('YOUR_')){
+    toast('Notion not configured — skipping.','err'); return;
+  }
+  const body={
+    parent:{database_id:CFG.NOTION_DB_ID},
+    properties:{
+      "Client Name":     {title:[{text:{content:d.contactPerson}}]},
+      "Business Name":   {rich_text:[{text:{content:d.businessName}}]},
+      "Email":           {email:d.email},
+      "Phone":           {phone_number:d.phone},
+      "Country":         {select:{name:d.country}},
+      "Package":         {select:{name:d.package}},
+      "System Type":     {select:{name:d.package}},
+      "Billing Type":    {select:{name:d.isRetainer?'Monthly Retainer':'One-Time Setup'}},
+      "Services":        {rich_text:[{text:{content:d.services}}]},
+      "Priority Service":{rich_text:[{text:{content:d.priorityService}}]},
+      "Price Range":     {rich_text:[{text:{content:d.priceRange}}]},
+      "Consultation":    {select:{name:d.consultation}},
+      "Ideal Customer":  {rich_text:[{text:{content:d.idealCustomer}}]},
+      "Target Countries":{rich_text:[{text:{content:d.targetCountries}}]},
+      "Conversion Goal": {select:{name:d.conversionGoal}},
+      "Hot Lead":        {rich_text:[{text:{content:d.hotLead}}]},
+      "Warm Lead":       {rich_text:[{text:{content:d.warmLead}}]},
+      "Cold Lead":       {rich_text:[{text:{content:d.coldLead}}]},
+      "Disqualified":    {rich_text:[{text:{content:d.disqualified}}]},
+      "Payment Status":  {select:{name:'Confirmed'}},
+      "Status":          {select:{name:'Ready for Setup'}},
+      "Subscribed Date": {date:{start:d.subscribedAt.split('T')[0]}},
+      "Next Renewal":    {date:{start:d.nextRenewal}}
+    }
+  };
+
+  const r=await fetch('https://api.notion.com/v1/pages',{
+    method:'POST',
+    headers:{
+      'Authorization':`Bearer ${CFG.NOTION_TOKEN}`,
+      'Content-Type':'application/json',
+      'Notion-Version':'2022-06-28'
+    },
+    body:JSON.stringify(body)
+  });
+  if(!r.ok){ const e=await r.json(); throw new Error(e.message||'Notion error'); }
+  toast('Saved to Notion CRM ✓','ok');
+}
+
+// ══════════════════════════════════════════════
+//  EMAIL + WHATSAPP via Claude API
+// ══════════════════════════════════════════════
+async function sendAll(d){
+  if(!CFG.RESEND_KEY||CFG.RESEND_KEY.includes('YOUR_')){
+    toast('Resend not configured — emails skipped.','err'); return;
+  }
+
+  // Ask Claude to write the emails and WhatsApp message
+  const prompt=`You are the professional assistant for The Giant Reach, a client acquisition agency run by Opeyemi Akinremi in Lagos.
+
+A new client just completed their onboarding. Return ONLY valid JSON (no markdown, no backticks) with this exact structure:
+{
+  "adminEmailSubject": "string",
+  "adminEmailHtml": "full HTML email string notifying Opeyemi of a new onboarded client",
+  "clientEmailSubject": "string",
+  "clientEmailHtml": "full HTML email string sent to the client confirming onboarding, welcoming them, and explaining next steps",
+  "clientWA": "plain text WhatsApp message (max 4 short paragraphs). Start with their first name + 🎉. Mention package. Say setup begins within 1 business day. If retainer, mention next renewal date. Sign off as Opeyemi from The Giant Reach."
+}
+
+Client details:
+Name: ${d.contactPerson}
+Business: ${d.businessName}
+Email: ${d.email}
+Package: ${d.package}
+Billing: ${d.isRetainer?'Monthly Retainer':'One-Time Setup'}
+Country: ${d.country}
+Subscribed: ${fmtDate(d.subscribedAt)}
+Next Renewal: ${d.isRetainer?d.nextRenewal:'N/A (one-time setup)'}`;
+
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1500,
+      messages:[{role:'user',content:prompt}]
+    })
+  });
+  const apiData=await res.json();
+  const raw=apiData.content?.map(c=>c.text||'').join('')||'';
+  let msgs;
+  try{ msgs=JSON.parse(raw.replace(/```json|```/g,'').trim()); }
+  catch(e){ console.warn('Parse error on Claude response'); return; }
+
+  // Admin email
+  await fetch('https://api.resend.com/emails',{
+    method:'POST',
+    headers:{'Authorization':`Bearer ${CFG.RESEND_KEY}`,'Content-Type':'application/json'},
+    body:JSON.stringify({
+      from:'The Giant Reach System <onboarding@thegiantreach.com>',
+      to:CFG.ADMIN_EMAIL,
+      subject:msgs.adminEmailSubject,
+      html:msgs.adminEmailHtml
+    })
+  });
+
+  // Client email
+  await fetch('https://api.resend.com/emails',{
+    method:'POST',
+    headers:{'Authorization':`Bearer ${CFG.RESEND_KEY}`,'Content-Type':'application/json'},
+    body:JSON.stringify({
+      from:'Opeyemi | The Giant Reach <opeyemi@thegiantreach.com>',
+      to:d.email,
+      subject:msgs.clientEmailSubject,
+      html:msgs.clientEmailHtml
+    })
+  });
+  toast('Confirmation emails sent ✓','ok');
+
+  // WhatsApp to client — auto-open so Opeyemi can send with 1 tap
+  const clientPhone=d.phone.replace(/\D/g,'');
+  if(clientPhone.length>=7){
+    const waUrl=`https://wa.me/${clientPhone}?text=${encodeURIComponent(msgs.clientWA)}`;
+    setTimeout(()=>{
+      const a=document.createElement('a');
+      a.href=waUrl; a.target='_blank'; a.rel='noopener';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }, 900);
+    toast('WhatsApp message opened — just hit Send ✓','ok');
+  }
+}
+
+// ══════════════════════════════════════════════
+//  ADMIN PANEL
+// ══════════════════════════════════════════════
+function openAdminLogin(){ openM('m-login'); setTimeout(()=>document.getElementById('adminPw').focus(),80); }
+function doLogin(){
+  if(document.getElementById('adminPw').value===CFG.ADMIN_PASS){
+    closeM('m-login'); document.getElementById('adminPw').value='';
+    showV('admin');
+    document.getElementById('progTrack').style.display='none';
+    renderAdmin('pending');
+  } else { toast('Incorrect password.','err'); document.getElementById('adminPw').value=''; }
+}
+function exitAdmin(){ showV('packages'); renderPkgs(); }
+function aTab(tab,el){
+  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on'); S.adminTab=tab; renderAdmin(tab);
+}
+
+function renderAdmin(filter){
+  const subs=getSubs();
+  const list=subs.filter(s=>s.status===filter);
+  const pN=subs.filter(s=>s.status==='pending').length;
+  const pb=document.getElementById('pendBadge');
+  if(pb) pb.innerHTML=pN>0?`<span style="background:var(--warn);color:white;border-radius:10px;padding:1px 8px;font-size:11px;margin-left:4px;">${pN}</span>`:'';
+
+  const el=document.getElementById('subList');
+  if(!list.length){ el.innerHTML=`<div class="empty-st"><div class="ei">📭</div><p>No ${filter} submissions yet.</p></div>`; return; }
+
+  el.innerHTML=list.map(sub=>`
+    <div class="scard" id="sc-${sub.id}">
+      <div class="scard-top">
+        <div>
+          <div class="scard-name">${sub.name}</div>
+          <div class="scard-meta">${sub.email} · ${sub.phone}</div>
+        </div>
+        <div>${chipH(sub.status)}</div>
+      </div>
+      <div class="scard-details">
+        <div class="scard-d"><strong>${sub.pkgName}</strong></div>
+        <div class="scard-d">${sub.pkgUpfront}</div>
+        <div class="scard-d">Submitted: <strong>${fmtDate(sub.submittedAt)}</strong></div>
+        ${sub.ref?`<div class="scard-d">Ref: <strong>${sub.ref}</strong></div>`:''}
+        ${sub.subscribedAt?`<div class="scard-d">Subscribed: <strong>${sub.subscribedAt.split('T')[0]}</strong></div>`:''}
+        ${sub.nextRenewal?`<div class="scard-d">Next Renewal: <strong style="color:var(--accent);">${sub.nextRenewal}</strong></div>`:''}
+        ${sub.isRetainer&&sub.nextRenewal?`<div class="scard-d" style="color:var(--accent);font-weight:600;">📅 30-day retainer cycle</div>`:''}
+      </div>
+      <div class="scard-actions">
+        <button class="btn btn-out btn-sm" onclick="viewReceipt('${sub.id}')">📄 Receipt</button>
+        ${sub.status==='pending'?`
+          <button class="btn btn-ok btn-sm" onclick="approveIt('${sub.id}')">✅ Approve</button>
+          <button class="btn btn-err btn-sm" onclick="openReject('${sub.id}')">✕ Reject</button>`:''}
+        ${sub.status==='approved'&&!sub.onboardingData?`
+          <button class="btn btn-ink btn-sm" onclick="copyObLink('${sub.id}')">🔗 Copy Onboarding Link</button>
+          <span style="font-size:12px;color:var(--mid);align-self:center;">⏳ Awaiting onboarding form</span>`:''}
+        ${sub.onboardingData?`<button class="btn btn-out btn-sm" onclick="viewOB('${sub.id}')">📋 View Onboarding</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function chipH(s){
+  const m={pending:'ch-pend',approved:'ch-appr',rejected:'ch-rej',onboarded:'ch-ob'};
+  const l={pending:'Pending Verification',approved:'Approved',rejected:'Rejected',onboarded:'Onboarded'};
+  return `<span class="chip ${m[s]||''}">${l[s]||s}</span>`;
+}
+
+function approveIt(id){
+  const subs=getSubs(); const s=subs.find(x=>x.id===id); if(!s) return;
+  s.status='approved'; s.approvedAt=new Date().toISOString();
+  saveSubs(subs);
+  toast(`${s.name} approved! Onboarding link is now live.`,'ok');
+  renderAdmin(S.adminTab);
+}
+
+function openReject(id){
+  document.getElementById('rejectId').value=id;
+  document.getElementById('rejectReason').value='';
+  openM('m-reject');
+}
+function doReject(){
+  const id=document.getElementById('rejectId').value;
+  const reason=document.getElementById('rejectReason').value;
+  const subs=getSubs(); const s=subs.find(x=>x.id===id); if(!s) return;
+  s.status='rejected'; s.rejectedAt=new Date().toISOString(); s.rejectReason=reason;
+  saveSubs(subs); closeM('m-reject');
+  toast('Submission rejected.','err');
+  renderAdmin(S.adminTab);
+}
+
+function copyObLink(id){
+  const url=window.location.href.split('?')[0]+'?onboard='+id;
+  navigator.clipboard.writeText(url)
+    .then(()=>toast('Onboarding link copied to clipboard!','ok'))
+    .catch(()=>toast('Link: '+url,'ok'));
+}
+
+function viewReceipt(id){
+  const s=getSubs().find(x=>x.id===id); if(!s) return;
+  const c=document.getElementById('receiptBody');
+  if(s.receiptType==='application/pdf'){
+    c.innerHTML=`<p style="color:var(--mid);font-size:13px;margin-bottom:12px;">PDF: <strong>${s.receiptName}</strong></p>
+    <div style="background:var(--light);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center;color:var(--mid);">
+      📄 PDF stored. In production this links directly from your cloud storage URL.
+    </div>`;
+  } else {
+    c.innerHTML=`<p style="color:var(--mid);font-size:12px;margin-bottom:10px;">${s.receiptName}</p>
+    <img src="${s.receiptData}" style="max-width:100%;border-radius:8px;display:block;" alt="Receipt"/>`;
+  }
+  openM('m-receipt');
+}
+
+function viewOB(id){
+  const s=getSubs().find(x=>x.id===id); if(!s||!s.onboardingData) return;
+  const d=s.onboardingData;
+  const rows=[
+    ['Business Name',d.businessName],['Contact Person',d.contactPerson],
+    ['Email',d.email],['Phone',d.phone],['Country',d.country],
+    ['Package',d.package],['Billing',d.isRetainer?'Monthly Retainer':'One-Time Setup'],
+    ['Services',d.services],['Priority Service',d.priorityService],
+    ['Price Range',d.priceRange],['Consultation',d.consultation],
+    ['Ideal Customer',d.idealCustomer],['Target Countries',d.targetCountries],
+    ['Conversion Goal',d.conversionGoal],
+    ['🔥 Hot Lead',d.hotLead],['🌡️ Warm Lead',d.warmLead],
+    ['🧊 Cold Lead',d.coldLead],['🚫 Disqualified',d.disqualified],
+    ['Subscribed Date',d.subscribedAt?.split('T')[0]],
+    ['Next Renewal (30 days)',d.nextRenewal]
+  ];
+  document.getElementById('obBody').innerHTML=rows.map(([k,v])=>`
+    <div style="background:var(--light);border:1px solid var(--border);border-radius:6px;padding:9px 12px;margin-bottom:7px;">
+      <div style="font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:2px;">${k}</div>
+      <div style="font-size:13px;color:var(--ink);">${v||'—'}</div>
+    </div>`).join('');
+  openM('m-ob');
+}
+
+// ══════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════
+function cp(text){
+  navigator.clipboard.writeText(text)
+    .then(()=>toast(`Copied: "${text}"`,'ok'))
+    .catch(()=>toast('Please copy manually.','err'));
+}
+
+function toast(msg,type='ok'){
+  const w=document.getElementById('toastWrap');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span>${type==='ok'?'✓':'✕'}</span>${msg}`;
+  w.appendChild(t);
+  setTimeout(()=>{t.style.transition='.3s ease';t.style.opacity='0';t.style.transform='translateX(110%)';setTimeout(()=>t.remove(),320);},3800);
+}
+
+function openM(id){ document.getElementById(id).classList.add('open'); }
+function closeM(id){ document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.overlay').forEach(o=>{
+  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(m=>m.classList.remove('open'));
+});
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+function init(){
+  renderPkgs();
+
+  // Config banner
+  if(!CFG.READY) document.getElementById('cfgBanner').style.display='flex';
+
+  // Update floating WA with real number
+  document.getElementById('waFloat').href=
+    `https://wa.me/${CFG.OWNER_WA}?text=Hi%20Opeyemi,%20I%20have%20a%20question%20about%20onboarding.`;
+
+  // Handle ?onboard=TGR-xxx link
+  const params=new URLSearchParams(window.location.search);
+  const oid=params.get('onboard');
+  if(oid){
+    const subs=getSubs();
+    const sub=subs.find(s=>s.id===oid);
+    if(sub&&sub.status==='approved'){
+      S.pkg=PKGS.find(p=>p.id===sub.pkgId)||null;
+      S.obId=oid;
+      buildSteps(4,'st-ob');
+      populateOnboarding();
+      // Pre-fill known info
+      const map={ob_email:'email',ob_phone:'phone',ob_person:'name'};
+      Object.entries(map).forEach(([fid,sk])=>{ const el=document.getElementById(fid); if(el&&sub[sk]) el.value=sub[sk]; });
+      document.getElementById('progTrack').style.display='block';
+      document.getElementById('progFill').style.width='100%';
+      showV('onboarding');
+    } else if(sub&&(sub.status==='pending'||sub.status==='rejected')){
+      document.getElementById('pEmail').textContent=sub.email;
+      document.getElementById('pRef').textContent=sub.id;
+      document.getElementById('waQuick').href=
+        `https://wa.me/${CFG.OWNER_WA}?text=Hi%20Opeyemi,%20my%20onboarding%20ref%20is%20${sub.id}`;
+      showV('pending');
+    }
+  }
+}
+
+init();
+</script>
+</body>
+</html>
