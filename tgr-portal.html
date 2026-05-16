@@ -1922,7 +1922,7 @@ if (inviteErr) throw inviteErr;
   await sendEmail({ to: clientEmail, subject: '🎉 Payment Approved – Access Your Dashboard', html: emailApproved(clientName, clientEmail) });
 } catch(emailErr) {
   console.warn('Approval email failed:', emailErr);
-
+}
     // Open WhatsApp to congratulate client
     const phone = clientPhone.replace(/\D/g, '');
     if (phone.length >= 7) {
