@@ -1199,7 +1199,7 @@ async function submitReceipt() {
     // 2. Create client record
     let clientRecord = null;
     if (!CFG.SUPA_URL.includes('YOUR_')) {
-     const { error: clientErr } = await sb.from('clients').insert({
+    const { error: clientErr } = await sb.from('clients').insert({
   service_id: APP.selectedService?.id,
   contact_person: name,
   email,
@@ -1208,13 +1208,23 @@ async function submitReceipt() {
   status: 'pending',
   payment_status: 'pending'
 });
-      if (clientErr) throw clientErr;
-     
-      APP.clientId = null;
+
+if (clientErr) throw clientErr;
+
+// Fetch client we just created
+const { data: clientData } = await sb
+  .from('clients')
+  .select('id')
+  .eq('email', email)
+  .order('created_at', { ascending: false })
+  .limit(1)
+  .single();
+
+APP.clientId = clientData?.id || null;
 
       // 3. Create payment record
       await sb.from('payments').insert({
-       client_id: null,
+      client_id: clientData?.id || null,
         service_id: APP.selectedService?.id,
         amount: APP.selectedService?.upfront_price || 0,
         status: 'pending',
