@@ -1903,26 +1903,21 @@ function adminNav(panel) {
 }
 
 // ── Approve payment ──
-async function approvePayment(payId, clientId, clientName, clientEmail, clientPhone) {
-  try {
-    await sb.from('payments').update({ status: 'confirmed', reviewed_at: new Date().toISOString() }).eq('id', payId);
-    await sb.from('clients').update({ payment_status: 'confirmed', status: 'active', subscribed_at: new Date().toISOString().split('T')[0] }).eq('id', clientId);
+const { error: inviteErr } = await sb.functions.invoke('approve-client', {
+  body: { 
+    clientEmail, 
+    clientName, 
+    clientId 
+  }
+});
 
-    // Send password setup invite — client clicks link, sets their own password
-    const { error: inviteErr } = await sb.auth.admin.inviteUserByEmail(clientEmail, {
-      redirectTo: 'https://thegiantreach.com/tgr-portal.html',
-      data: { full_name: clientName, role: 'client', client_id: clientId }
-    });
-    // inviteUserByEmail needs service_role key on server
-    // Fallback: use signInWithOtp so client gets a link to set password
-    if (inviteErr) {
-      await sb.auth.resetPasswordForEmail(clientEmail, {
-        redirectTo: 'https://thegiantreach.com/tgr-portal.html'
-      });
-    }
-
+if (inviteErr) throw inviteErr;
+  
     // Send approval email
-    await sendEmail({ to: clientEmail, subject: '✅ Payment Approved — Access Your Dashboard', html: emailApproved(clientName, clientEmail, 'https://thegiantreach.com/tgr-portal.html') });
+    try {
+  await sendEmail({ to: clientEmail, subject: '🎉 Payment Approved – Access Your Dashboard', html: emailApproved(clientName, clientEmail) });
+} catch(emailErr) {
+  console.warn('Approval email failed:', emailErr);
 
     // Open WhatsApp to congratulate client
     const phone = clientPhone.replace(/\D/g, '');
