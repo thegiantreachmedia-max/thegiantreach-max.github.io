@@ -1903,6 +1903,10 @@ function adminNav(panel) {
 }
 
 // ── Approve payment ──
+async function approvePayment(payId, clientId, clientName, clientEmail, clientPhone) {
+  try {
+    await sb.from('payments').update({ status: 'confirmed', reviewed_at: new Date().toISOString() }).eq('id', payId);
+    await sb.from('clients').update({ payment_status: 'confirmed', status: 'active', subscribed_at: new Date().toISOString().split('T')[0] }).eq('id', clientId);
 const { error: inviteErr } = await sb.functions.invoke('approve-client', {
   body: { 
     clientEmail, 
