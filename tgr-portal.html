@@ -1228,6 +1228,7 @@ async function submitReceipt() {
     btn.innerHTML='<span class="spin"></span> Sending emails…';
 
     // 4. Send emails via Resend
+     try {
     await sendEmail({
       to: email,
       subject: 'Receipt Received — The Giant Reach',
@@ -1238,7 +1239,9 @@ async function submitReceipt() {
       subject: `New Payment Receipt: ${name} — ${APP.selectedService?.name||''}`,
       html: emailAdminNewReceipt(name, email, phone, APP.selectedService?.name||'', ref||'N/A')
     });
-
+} catch(emailErr) {
+  console.warn('Email sending failed:', emailErr);
+}
     // Update UI
     document.getElementById('pEmail').textContent = email;
     document.getElementById('pRef').textContent = clientRecord?.id || 'TGR-'+Date.now().toString(36).toUpperCase();
