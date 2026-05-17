@@ -1956,7 +1956,7 @@ async function approvePayment(payId, clientId, clientName, clientEmail, clientPh
    const { error: inviteErr } = await sb.functions.invoke('approve-client', {
   body: { clientEmail, clientName, clientId }
 });
-if (inviteErr && !inviteErr.message?.includes('already registered')) throw inviteErr;
+if (inviteErr) console.warn('Invite warning:', inviteErr.message);
 
     // 3. Link profile if exists
     try {
