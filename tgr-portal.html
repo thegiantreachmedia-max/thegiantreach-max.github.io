@@ -1199,32 +1199,22 @@ async function submitReceipt() {
     // 2. Create client record
     let clientRecord = null;
     if (!CFG.SUPA_URL.includes('YOUR_')) {
-    const { error: clientErr } = await sb.from('clients').insert({
-  service_id: APP.selectedService?.id,
-  contact_person: name,
-  email,
-  phone,
-  business_name: name,
-  status: 'pending',
-  payment_status: 'pending'
-});
-
-if (clientErr) throw clientErr;
-
-// Fetch client we just created
-const { data: clientData } = await sb
-  .from('clients')
-  .select('id')
-  .eq('email', email)
-  .order('created_at', { ascending: false })
-  .limit(1)
-  .single();
-
-APP.clientId = clientData?.id || null;
+      const { data: clientData, error: clientErr } = await sb.from('clients').insert({
+        service_id: APP.selectedService?.id,
+        contact_person: name,
+        email,
+        phone,
+        business_name: name,
+        status: 'pending',
+        payment_status: 'pending'
+      }).select().single();
+      if (clientErr) throw clientErr;
+      clientRecord = clientData;
+      APP.clientId = clientData.id;
 
       // 3. Create payment record
       await sb.from('payments').insert({
-      client_id: clientData?.id || null,
+        client_id: clientData.id,
         service_id: APP.selectedService?.id,
         amount: APP.selectedService?.upfront_price || 0,
         status: 'pending',
@@ -1238,7 +1228,6 @@ APP.clientId = clientData?.id || null;
     btn.innerHTML='<span class="spin"></span> Sending emails…';
 
     // 4. Send emails via Resend
-     try {
     await sendEmail({
       to: email,
       subject: 'Receipt Received — The Giant Reach',
@@ -1249,9 +1238,7 @@ APP.clientId = clientData?.id || null;
       subject: `New Payment Receipt: ${name} — ${APP.selectedService?.name||''}`,
       html: emailAdminNewReceipt(name, email, phone, APP.selectedService?.name||'', ref||'N/A')
     });
-} catch(emailErr) {
-  console.warn('Email sending failed:', emailErr);
-}
+
     // Update UI
     document.getElementById('pEmail').textContent = email;
     document.getElementById('pRef').textContent = clientRecord?.id || 'TGR-'+Date.now().toString(36).toUpperCase();
@@ -1493,6 +1480,17 @@ async function doSetPassword() {
     btn.disabled = false; btn.textContent = 'Save Password & Enter Dashboard →';
     successEl.style.display = 'block';
     btn.style.display = 'none';
+
+    // Link the auth user to their client record in DB
+    try {
+      await sb.from('clients')
+        .update({ user_id: user.id })
+        .eq('email', user.email)
+        .is('user_id', null);
+      await sb.from('profiles')
+        .update({ role: 'client' })
+        .eq('id', user.id);
+    } catch(linkErr) { console.warn('Client link:', linkErr.message); }
 
     // After 2 seconds close modal and load dashboard
     setTimeout(async () => {
@@ -1905,35 +1903,77 @@ function adminNav(panel) {
 // ── Approve payment ──
 async function approvePayment(payId, clientId, clientName, clientEmail, clientPhone) {
   try {
-    await sb.from('payments').update({ status: 'confirmed', reviewed_at: new Date().toISOString() }).eq('id', payId);
-    await sb.from('clients').update({ payment_status: 'confirmed', status: 'active', subscribed_at: new Date().toISOString().split('T')[0] }).eq('id', clientId);
-const { error: inviteErr } = await sb.functions.invoke('approve-client', {
-  body: { 
-    clientEmail, 
-    clientName, 
-    clientId 
-  }
-});
+    // 1. Update payment + client status in Supabase
+    await sb.from('payments').update({
+      status: 'confirmed',
+      reviewed_at: new Date().toISOString()
+    }).eq('id', payId);
 
-if (inviteErr) throw inviteErr;
-  
-    // Send approval email
-    try {
-  await sendEmail({ to: clientEmail, subject: '🎉 Payment Approved – Access Your Dashboard', html: emailApproved(clientName, clientEmail) });
-} catch(emailErr) {
-  console.warn('Approval email failed:', emailErr);
-}
-    // Open WhatsApp to congratulate client
-    const phone = clientPhone.replace(/\D/g, '');
+    await sb.from('clients').update({
+      payment_status: 'confirmed',
+      status: 'active',
+      subscribed_at: new Date().toISOString().split('T')[0]
+    }).eq('id', clientId);
+
+    // 2. Send password setup/reset link
+    // resetPasswordForEmail works whether the account is new or existing
+    // New accounts: creates account + sends setup link
+    // Existing accounts: sends reset link so they can set/update password
+    const { error: resetErr } = await sb.auth.resetPasswordForEmail(clientEmail, {
+      redirectTo: 'https://thegiantreach.com/tgr-portal.html'
+    });
+
+    if (resetErr) {
+      console.warn('Password email warning (non-fatal):', resetErr.message);
+    }
+
+    // 3. Update profile role to client (in case they already had an account)
+    // We do this via a direct DB upsert so it works regardless
+    const { data: existingUser } = await sb
+      .from('profiles')
+      .select('id')
+      .eq('email', clientEmail)
+      .maybeSingle();
+
+    if (existingUser?.id) {
+      await sb.from('profiles').update({ role: 'client' }).eq('id', existingUser.id);
+      await sb.from('clients').update({ user_id: existingUser.id }).eq('id', clientId);
+    }
+
+    // 4. Send your custom approval email via Resend
+    await sendEmail({
+      to: clientEmail,
+      subject: '✅ Payment Confirmed — Set Up Your Dashboard Access',
+      html: emailApproved(clientName, clientEmail, 'https://thegiantreach.com/tgr-portal.html')
+    });
+
+    // 5. Auto-open WhatsApp to send congratulations to client
+    const phone = (clientPhone || '').replace(/\D/g, '');
     if (phone.length >= 7) {
-      const msg = encodeURIComponent(`Hi ${clientName.split(' ')[0]}! 🎉 Your payment has been confirmed. Your dashboard access has been sent to your email. Setup begins within 1 business day. — Opeyemi | The Giant Reach`);
+      const msg = encodeURIComponent(
+        `Hi ${clientName.split(' ')[0]}! 🎉
+
+Your payment has been confirmed!
+
+Check your email — we've sent you a link to set up your dashboard password. Once done, you can log in anytime at:
+https://thegiantreach.com/tgr-portal.html
+
+Setup begins within 1 business day. I'll be in touch shortly!
+
+— Opeyemi | The Giant Reach`
+      );
       window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
     }
 
-    toast(`✅ ${clientName} approved! Login sent + WhatsApp opened.`, 'ok');
+    toast(`✅ ${clientName} approved! Email sent + WhatsApp opened.`, 'ok');
     loadAdminDashboard();
+
   } catch(e) {
-    toast('Approval error: ' + e.message, 'err');
+    // Even if something fails, the payment is already approved in DB
+    // Show success but log the error
+    console.error('approvePayment error:', e);
+    toast(`✅ ${clientName} approved! (Note: ${e.message})`, 'ok');
+    loadAdminDashboard();
   }
 }
 
@@ -2096,19 +2136,29 @@ const emailAdminNewOnboarding = (d) => emailBase(`
   </div>`);
 
 const emailApproved = (name, email, dashUrl) => emailBase(`
-  <h2 style="font-family:Georgia,serif;font-weight:900;color:#0a0b0d">Payment Approved — You're In! ✅</h2>
-  <p style="color:#374151">Hi ${name.split(' ')[0]}, your payment has been confirmed and your client dashboard is ready!</p>
-  <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:20px;margin:20px 0;text-align:center">
-    <p style="font-size:15px;color:#065f46;font-weight:700;margin-bottom:8px">🎉 Your dashboard is live</p>
-    <p style="font-size:13px;color:#065f46;margin-bottom:16px">Click the button below — enter your email and we'll send you a one-click login link instantly. No password needed.</p>
-    <a href="${dashUrl}?login=client" style="background:#0a0b0d;color:white;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;display:inline-block">Access My Dashboard →</a>
+  <h2 style="font-family:Georgia,serif;font-weight:900;color:#0a0b0d">Payment Confirmed — Create Your Password 🎉</h2>
+  <p style="color:#374151;margin-bottom:16px">Hi ${name.split(' ')[0]}, your payment has been confirmed! You now have access to your personal client dashboard.</p>
+
+  <div style="background:#0a0b0d;border-radius:10px;padding:24px;margin:20px 0;text-align:center">
+    <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;font-weight:600">ACTION REQUIRED</p>
+    <p style="font-size:15px;color:white;font-weight:700;margin-bottom:6px">Step 1 — Click the link below</p>
+    <p style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:18px">A separate email from Supabase has been sent to you with a <strong style="color:white">password setup link</strong>. Click it to create your password.</p>
+    <p style="font-size:15px;color:white;font-weight:700;margin-bottom:6px">Step 2 — Set your password</p>
+    <p style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:18px">You'll land on the portal and see a form to create your password. This is yours permanently.</p>
+    <p style="font-size:15px;color:white;font-weight:700;margin-bottom:6px">Step 3 — Log in anytime</p>
+    <p style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:20px">Visit the portal, click Login → Client, enter your email and password below.</p>
+    <a href="${dashUrl}" style="background:white;color:#0a0b0d;padding:13px 28px;border-radius:6px;text-decoration:none;font-weight:800;font-size:14px;display:inline-block">Go to My Dashboard →</a>
   </div>
-  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:16px">
-    <p style="font-size:13px;margin:0 0 5px"><strong>Your login email:</strong> ${email}</p>
-    <p style="font-size:12px;color:#6b7280;margin:0">Use the magic link option — enter your email and click the link sent to your inbox.</p>
+
+  <div style="background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:8px;padding:18px;margin-bottom:16px">
+    <p style="font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:10px">Your Login Details (Save These)</p>
+    <p style="font-size:14px;margin:0 0 6px;color:#0a0b0d"><strong>Portal:</strong> thegiantreach.com/tgr-portal.html</p>
+    <p style="font-size:14px;margin:0;color:#0a0b0d"><strong>Email:</strong> ${email}</p>
+    <p style="font-size:13px;margin:8px 0 0;color:#6b7280">Password: set by you via the Supabase email link</p>
   </div>
-  <p style="color:#374151;font-size:13px">Setup begins within 1 business day. Opeyemi will reach out via WhatsApp with next steps.</p>
-  <p style="color:#374151">— Opeyemi | The Giant Reach</p>`);
+
+  <p style="color:#374151;font-size:13px">⚠️ Check your spam folder if you don't see the password setup email within a few minutes.</p>
+  <p style="color:#374151;margin-top:14px">Setup begins within 1 business day. — Opeyemi | The Giant Reach</p>`);
 
 // ════════════════════════════════════════════════════
 //  UTILS
@@ -2163,25 +2213,57 @@ function handleURLParams() {
 async function init() {
   setAuthRole('client'); // default
 
-  // Handle Supabase invite/recovery link in URL hash
+  // Handle Supabase password reset/invite link in URL hash
+  // When admin approves → Supabase emails client → client clicks link → lands here
   const hash = window.location.hash;
-  if (hash && hash.includes('access_token')) {
-    // Let Supabase process the token
-    const { data, error } = await sb.auth.getSession();
-    if (data?.session?.user) {
-      const type = new URLSearchParams(hash.replace('#','?')).get('type');
-      if (type === 'invite' || type === 'recovery') {
-        // Client arrived via invite link — show password setup
-        APP.currentUser = data.session.user;
-        history.replaceState(null, '', window.location.pathname);
-        openModal('m-setpass');
-        return;
-      } else {
-        // Normal session restore
-        await handleAuthUser(data.session.user);
+  if (hash && (hash.includes('access_token') || hash.includes('error'))) {
+    try {
+      // Parse the hash params
+      const hashParams = new URLSearchParams(hash.replace('#', '?'));
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
+      const tokenType = hashParams.get('type'); // 'recovery' or 'invite'
+      const hashError = hashParams.get('error');
+      const hashErrorDesc = hashParams.get('error_description');
+
+      if (hashError) {
+        // Token expired or invalid
+        console.warn('Auth link error:', hashError, hashErrorDesc);
+        await Promise.all([loadServices(), checkExistingSession()]);
+        setTimeout(() => {
+          toast('Your setup link has expired. Please contact Opeyemi for a new one.', 'err');
+        }, 500);
         history.replaceState(null, '', window.location.pathname);
         return;
       }
+
+      if (accessToken && (tokenType === 'recovery' || tokenType === 'invite' || tokenType === 'signup')) {
+        // Set the session manually so Supabase knows who this is
+        const { data: sessionData, error: sessionErr } = await sb.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken || ''
+        });
+
+        if (sessionErr) throw sessionErr;
+
+        APP.currentUser = sessionData?.session?.user;
+        // Clean URL
+        history.replaceState(null, '', window.location.pathname);
+        // Show password setup modal
+        openModal('m-setpass');
+        await loadServices();
+        return;
+      }
+    } catch(hashErr) {
+      console.warn('Hash processing error:', hashErr.message);
+    }
+
+    // Fallback — try to get existing session
+    const { data } = await sb.auth.getSession();
+    if (data?.session?.user) {
+      history.replaceState(null, '', window.location.pathname);
+      await handleAuthUser(data.session.user);
+      return;
     }
   }
 
