@@ -1953,10 +1953,10 @@ async function approvePayment(payId, clientId, clientName, clientEmail, clientPh
     }).eq('id', clientId);
 
     // 2. Send Supabase password reset email (creates login link for client)
-    const { error: resetErr } = await sb.auth.resetPasswordForEmail(clientEmail, {
-      redirectTo: 'https://thegiantreach.com/tgr-portal.html'
-    });
-    if (resetErr) console.warn('Password reset email:', resetErr.message);
+   const { error: inviteErr } = await sb.functions.invoke('approve-client', {
+  body: { clientEmail, clientName, clientId }
+});
+if (inviteErr && !inviteErr.message?.includes('already registered')) throw inviteErr;
 
     // 3. Link profile if exists
     try {
