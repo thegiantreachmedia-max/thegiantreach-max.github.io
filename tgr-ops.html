@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TGR — Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #17171f;
+    --border: #23232e;
+    --accent: #d4f53c;
+    --accent2: #7c3aed;
+    --accent3: #06b6d4;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --danger: #f43f5e;
+    --success: #10b981;
+    --warn: #f59e0b;
+    --sidebar-w: 220px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ─── SIDEBAR ─── */
+  #sidebar {
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-mark {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -1px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .logo-sub {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  nav { padding: 16px 0; flex: 1; }
+
+  nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  nav a:hover { color: var(--text); background: var(--surface2); }
+  nav a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(212,245,60,0.05);
+  }
+  nav a .nav-icon { width: 16px; text-align: center; font-size: 14px; opacity: 0.8; }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+  }
+
+  /* ─── MAIN ─── */
+  #main {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    height: 56px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    gap: 16px;
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+  .topbar-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    flex: 1;
+  }
+  .topbar-date {
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+  .btn-accent { background: var(--accent); color: #000; font-weight: 500; }
+  .btn-accent:hover { background: #c5e830; }
+  .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--muted); }
+  .btn-wa { background: #25D366; color: #fff; }
+  .btn-wa:hover { background: #20b858; }
+  .btn-danger { background: var(--danger); color: #fff; }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+  }
+
+  /* scrollbar */
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ─── PANELS (sections) ─── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ─── GRID CARDS ─── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--muted); }
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .stat-card.green::after { background: var(--success); }
+  .stat-card.yellow::after { background: var(--accent); }
+  .stat-card.purple::after { background: var(--accent2); }
+  .stat-card.cyan::after { background: var(--accent3); }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .stat-delta {
+    font-size: 11px;
+    margin-top: 6px;
+    color: var(--muted);
+  }
+  .stat-delta.up { color: var(--success); }
+  .stat-delta.down { color: var(--danger); }
+
+  /* ─── SECTION HEADER ─── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  /* ─── TABLE ─── */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    font-weight: 400;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .badge-new { background: rgba(6,182,212,0.15); color: var(--accent3); }
+  .badge-qualified { background: rgba(212,245,60,0.12); color: var(--accent); }
+  .badge-proposal { background: rgba(124,58,237,0.15); color: #a78bfa; }
+  .badge-won { background: rgba(16,185,129,0.15); color: var(--success); }
+  .badge-lost { background: rgba(244,63,94,0.12); color: var(--danger); }
+  .badge-active { background: rgba(16,185,129,0.15); color: var(--success); }
+  .badge-pending { background: rgba(245,158,11,0.15); color: var(--warn); }
+  .badge-review { background: rgba(124,58,237,0.15); color: #a78bfa; }
+
+  /* ─── PIPELINE KANBAN ─── */
+  .kanban {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .kanban-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .kanban-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface2);
+  }
+  .kanban-count {
+    background: var(--border);
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 10px;
+    color: var(--text);
+  }
+  .kanban-cards { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .kanban-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 11px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+  }
+  .kanban-card:hover { border-color: var(--muted); transform: translateY(-1px); }
+  .kc-name { font-size: 12px; font-weight: 500; margin-bottom: 4px; }
+  .kc-value { font-size: 11px; color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 600; }
+  .kc-date { font-size: 10px; color: var(--muted); margin-top: 4px; }
+  .kc-actions { margin-top: 8px; display: flex; gap: 6px; }
+  .kc-btn {
+    flex: 1;
+    padding: 5px 0;
+    border-radius: 5px;
+    font-size: 10px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: opacity 0.15s;
+  }
+  .kc-btn:hover { opacity: 0.85; }
+
+  /* ─── CHART BARS ─── */
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .chart-title {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { width: 60px; font-size: 11px; color: var(--muted); text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .bar-val { width: 50px; font-size: 11px; color: var(--text); text-align: right; flex-shrink: 0; }
+
+  /* ─── AI INSIGHTS ─── */
+  .ai-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .ai-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .ai-input:focus { border-color: var(--accent); }
+  .ai-input::placeholder { color: var(--muted); }
+
+  .ai-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .ai-msg {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .ai-msg-role {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .ai-msg.user { border-left: 2px solid var(--accent3); }
+  .ai-msg.assistant { border-left: 2px solid var(--accent); }
+  .ai-msg-role.assistant-role { color: var(--accent); }
+  .ai-msg-role.user-role { color: var(--accent3); }
+  .ai-msg-text { font-size: 13px; line-height: 1.7; color: var(--text); }
+  .ai-msg-text p { margin-bottom: 8px; }
+  .ai-msg-text p:last-child { margin-bottom: 0; }
+  .ai-typing { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+  .ai-typing span {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: typing 1.2s infinite;
+  }
+  .ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+  .ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+
+  .context-pills {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .context-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .context-pill:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ─── DRIVE EMBED ─── */
+  .drive-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .drive-toolbar {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: var(--surface2);
+  }
+  .drive-url-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 12px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    outline: none;
+  }
+  .drive-url-input:focus { border-color: var(--accent3); }
+  .drive-iframe {
+    width: 100%;
+    height: 560px;
+    border: none;
+    background: #fff;
+  }
+  .drive-placeholder {
+    height: 560px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+  }
+  .drive-placeholder .icon { font-size: 40px; opacity: 0.3; }
+  .drive-placeholder p { font-size: 12px; text-align: center; line-height: 1.6; }
+
+  /* ─── ONBOARDING ─── */
+  .onboarding-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .onboard-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .onboard-card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .onboard-card-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
+  .onboard-portal-btn {
+    margin-top: auto;
+    padding-top: 12px;
+  }
+
+  .progress-list { display: flex; flex-direction: column; gap: 12px; }
+  .progress-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .progress-check {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+  .progress-check.done { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+  .progress-check.pending { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+  .progress-check.active { background: rgba(212,245,60,0.1); color: var(--accent); border: 1px solid rgba(212,245,60,0.3); animation: pulse 2s infinite; }
+  .progress-label { flex: 1; font-size: 12px; }
+  .progress-label small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
+
+  /* ─── RESPONSIVE tweaks ─── */
+  @media (max-width: 1200px) {
+    .stat-grid { grid-template-columns: repeat(2,1fr); }
+    .kanban { grid-template-columns: repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="logo">
+    <div class="logo-mark">TGR</div>
+    <div class="logo-sub">Operations Hub</div>
+  </div>
+  <nav>
+    <a class="active" data-panel="dashboard">
+      <span class="nav-icon">⬡</span> Dashboard
+    </a>
+    <a data-panel="leads">
+      <span class="nav-icon">◈</span> Leads / CRM
+    </a>
+    <a data-panel="onboarding">
+      <span class="nav-icon">◇</span> Onboarding
+    </a>
+    <a data-panel="documents">
+      <span class="nav-icon">◻</span> Documents
+    </a>
+    <a data-panel="ai">
+      <span class="nav-icon">◉</span> AI Insights
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <span class="status-dot"></span>Live — Supabase
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard Overview</div>
+    <div class="topbar-date" id="topbar-date"></div>
+    <button class="btn btn-ghost" onclick="refresh()">↺ Refresh</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══════════════════════════════════════════════════
+         PANEL: DASHBOARD
+    ════════════════════════════════════════════════════ -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card green">
+          <div class="stat-label">Monthly Revenue</div>
+          <div class="stat-value" style="color:var(--success)">$84.2k</div>
+          <div class="stat-delta up">↑ 12.4% vs last month</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-label">Monthly Expenses</div>
+          <div class="stat-value" style="color:var(--accent)">$31.7k</div>
+          <div class="stat-delta down">↑ 3.1% vs last month</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-label">Active Clients</div>
+          <div class="stat-value" style="color:#a78bfa">24</div>
+          <div class="stat-delta up">↑ 2 new this month</div>
+        </div>
+        <div class="stat-card cyan">
+          <div class="stat-label">Pipeline Leads</div>
+          <div class="stat-value" style="color:var(--accent3)">41</div>
+          <div class="stat-delta up">↑ 7 new this week</div>
+        </div>
+      </div>
+
+      <div class="chart-row">
+        <div class="chart-card">
+          <div class="chart-title">Revenue by Month</div>
+          <div class="bar-chart" id="rev-chart"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Lead Sources</div>
+          <div class="bar-chart" id="src-chart"></div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">Recent Activity</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Event</th><th>Client / Lead</th><th>Value</th><th>Status</th><th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>New lead inbound</td><td>Coastal Brew Co.</td><td>$12,000</td><td><span class="badge badge-new">New</span></td><td>2h ago</td></tr>
+            <tr><td>Proposal sent</td><td>Meridian Partners</td><td>$34,500</td><td><span class="badge badge-proposal">Proposal</span></td><td>5h ago</td></tr>
+            <tr><td>Contract signed</td><td>Vantage Digital</td><td>$8,200/mo</td><td><span class="badge badge-won">Won</span></td><td>1d ago</td></tr>
+            <tr><td>Onboarding started</td><td>Summit Goods</td><td>$5,400/mo</td><td><span class="badge badge-active">Active</span></td><td>1d ago</td></tr>
+            <tr><td>Invoice paid</td><td>Northfield Media</td><td>$16,000</td><td><span class="badge badge-won">Paid</span></td><td>2d ago</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         PANEL: LEADS / CRM
+    ════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-leads">
+      <div class="section-header" style="margin-bottom:20px">
+        <div class="section-title">Pipeline Board</div>
+        <button class="btn btn-accent" onclick="addLead()">+ Add Lead</button>
+      </div>
+
+      <div class="kanban" id="kanban-board">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">All Leads</div>
+        <div style="display:flex;gap:8px;">
+          <input class="ai-input" style="width:200px;padding:7px 12px;" placeholder="Search leads…" oninput="filterLeads(this.value)" />
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Company</th><th>Stage</th><th>Value</th><th>Owner</th><th>Last Touch</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="leads-tbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         PANEL: ONBOARDING
+    ════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-onboarding">
+      <div class="onboarding-grid">
+        <div class="onboard-card">
+          <div class="onboard-card-title">Client Portal</div>
+          <div class="onboard-card-desc">
+            Direct clients to the standalone onboarding portal. They can complete intake forms, upload documents, and track their own setup progress.
+          </div>
+          <div class="onboard-portal-btn">
+            <a href="tgr-portal.html" target="_blank">
+              <button class="btn btn-accent" style="width:100%">→ Open tgr-portal.html</button>
+            </a>
+          </div>
+        </div>
+        <div class="onboard-card">
+          <div class="onboard-card-title">Active Onboardings</div>
+          <div class="onboard-card-desc">
+            <strong style="color:var(--success);font-size:22px;font-family:'Syne',sans-serif;">3</strong> clients currently in onboarding.
+            Avg completion time: <strong style="color:var(--accent)">6.2 days</strong>
+          </div>
+          <div class="onboard-portal-btn">
+            <button class="btn btn-ghost" style="width:100%" onclick="switchPanel('leads')">View Leads →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">Onboarding Checklist — Summit Goods</div>
+        <span class="badge badge-active">In Progress</span>
+      </div>
+      <div class="progress-list">
+        <div class="progress-item">
+          <div class="progress-check done">✓</div>
+          <div class="progress-label">Contract signed &amp; countersigned <small>May 18, 2026</small></div>
+          <span class="badge badge-won">Done</span>
+        </div>
+        <div class="progress-item">
+          <div class="progress-check done">✓</div>
+          <div class="progress-label">Initial payment received <small>May 19, 2026</small></div>
+          <span class="badge badge-won">Done</span>
+        </div>
+        <div class="progress-item">
+          <div class="progress-check active">●</div>
+          <div class="progress-label">Intake questionnaire <small>Sent — awaiting client</small></div>
+          <span class="badge badge-pending">Pending</span>
+        </div>
+        <div class="progress-item">
+          <div class="progress-check pending">○</div>
+          <div class="progress-label">Access provisioning <small>Blocked on intake</small></div>
+          <span class="badge badge-pending">Pending</span>
+        </div>
+        <div class="progress-item">
+          <div class="progress-check pending">○</div>
+          <div class="progress-label">Kick-off call scheduled <small>—</small></div>
+          <span class="badge badge-pending">Pending</span>
+        </div>
+        <div class="progress-item">
+          <div class="progress-check pending">○</div>
+          <div class="progress-label">Onboarding complete — handoff to account team <small>—</small></div>
+          <span class="badge badge-pending">Pending</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         PANEL: DOCUMENTS
+    ════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-documents">
+      <div class="section-header" style="margin-bottom:16px;">
+        <div class="section-title">Google Drive</div>
+        <span style="font-size:11px;color:var(--muted);">Paste any shareable Drive folder/file URL below</span>
+      </div>
+      <div class="drive-container">
+        <div class="drive-toolbar">
+          <input class="drive-url-input" id="drive-url" placeholder="https://drive.google.com/drive/folders/…" />
+          <button class="btn btn-accent" onclick="loadDrive()">Load</button>
+          <button class="btn btn-ghost" onclick="openDrive()">↗ Open</button>
+        </div>
+        <div id="drive-frame-wrap">
+          <div class="drive-placeholder">
+            <div class="icon">◻</div>
+            <p>Paste a Google Drive folder or file URL above<br>and click <strong style="color:var(--accent)">Load</strong> to embed it here.<br><span style="font-size:10px;color:var(--muted)">No OAuth required — uses Drive's built-in viewer.</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         PANEL: AI INSIGHTS
+    ════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-ai">
+      <div class="section-header" style="margin-bottom:8px">
+        <div class="section-title">AI Insights</div>
+        <span style="font-size:11px;color:var(--muted);">Powered by Groq · reads live Supabase data</span>
+      </div>
+
+      <div class="context-pills">
+        <div class="context-pill" onclick="setPrompt('Summarise this month\'s revenue vs expenses and flag any concerns')">Revenue health</div>
+        <div class="context-pill" onclick="setPrompt('Which leads are most at risk of going cold?')">At-risk leads</div>
+        <div class="context-pill" onclick="setPrompt('What actions should I prioritise today?')">Today\'s priorities</div>
+        <div class="context-pill" onclick="setPrompt('Forecast next month\'s revenue based on current pipeline')">Revenue forecast</div>
+        <div class="context-pill" onclick="setPrompt('Summarise all onboarding blockers')">Onboarding blockers</div>
+      </div>
+
+      <div class="ai-input-row">
+        <input class="ai-input" id="ai-prompt" placeholder="Ask anything about your business data…" onkeydown="if(event.key==='Enter')sendAI()" />
+        <button class="btn btn-accent" onclick="sendAI()">Ask →</button>
+        <button class="btn btn-ghost" onclick="clearAI()">Clear</button>
+      </div>
+
+      <!-- Groq config row -->
+      <div style="display:flex;gap:10px;margin-bottom:20px;align-items:center;">
+        <input class="ai-input" id="groq-key" type="password" placeholder="Groq API key (stored in sessionStorage)" style="max-width:320px;" />
+        <button class="btn btn-ghost btn-sm" onclick="saveGroqKey()" style="font-size:11px;padding:7px 12px;">Save Key</button>
+        <span id="groq-key-status" style="font-size:11px;color:var(--muted);"></span>
+      </div>
+
+      <div class="ai-messages" id="ai-messages">
+        <div class="ai-msg assistant">
+          <div class="ai-msg-role assistant-role">TGR AI</div>
+          <div class="ai-msg-text">
+            <p>Hello. I'm connected to your Supabase data context. Enter your Groq API key above to activate live inference, then ask me anything — revenue trends, lead pipeline health, onboarding blockers, or what to prioritise today.</p>
+            <p style="color:var(--muted);font-size:11px;">Tip: use the quick-prompt pills above for common queries.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+/* ══════════════════════════════════════════
+   NAV
+══════════════════════════════════════════ */
+const titles = {
+  dashboard: 'Dashboard Overview',
+  leads: 'Leads / CRM',
+  onboarding: 'Client Onboarding',
+  documents: 'Documents',
+  ai: 'AI Insights'
+};
+
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', () => {
+    const p = a.dataset.panel;
+    switchPanel(p);
+  });
+});
+
+function switchPanel(p) {
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.panel === p));
+  document.querySelectorAll('.panel').forEach(el => el.classList.toggle('active', el.id === 'panel-' + p));
+  document.getElementById('topbar-title').textContent = titles[p] || p;
+}
+
+// Date
+(function() {
+  const d = new Date();
+  document.getElementById('topbar-date').textContent = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+})();
+
+/* ══════════════════════════════════════════
+   CHARTS
+══════════════════════════════════════════ */
+const revData = [
+  { label: 'Jan', val: 61, max: 100 },
+  { label: 'Feb', val: 58, max: 100 },
+  { label: 'Mar', val: 72, max: 100 },
+  { label: 'Apr', val: 78, max: 100 },
+  { label: 'May', val: 84, max: 100 },
+];
+const srcData = [
+  { label: 'Referral', val: 42, max: 60 },
+  { label: 'LinkedIn', val: 28, max: 60 },
+  { label: 'Outbound', val: 18, max: 60 },
+  { label: 'Inbound', val: 12, max: 60 },
+];
+const colours = ['#10b981','#d4f53c','#7c3aed','#06b6d4','#f59e0b'];
+
+function renderBar(containerId, data, unit='') {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = data.map((row, i) => `
+    <div class="bar-row">
+      <div class="bar-label">${row.label}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0%;background:${colours[i % colours.length]}" data-pct="${Math.round(row.val/row.max*100)}"></div>
+      </div>
+      <div class="bar-val">${unit}${row.val}k</div>
+    </div>
+  `).join('');
+  setTimeout(() => {
+    el.querySelectorAll('.bar-fill').forEach(b => b.style.width = b.dataset.pct + '%');
+  }, 100);
+}
+renderBar('rev-chart', revData, '$');
+renderBar('src-chart', srcData.map(d => ({...d, max:60})), '');
+
+/* ══════════════════════════════════════════
+   LEADS DATA
+══════════════════════════════════════════ */
+const leadsData = [
+  { id:1, name:'Jordan Mills',    company:'Coastal Brew Co.',  stage:'new',       value:12000, owner:'Alex T.',  last:'Today',     phone:'+15550001111' },
+  { id:2, name:'Priya Mehta',     company:'Meridian Partners', stage:'proposal',  value:34500, owner:'Sam R.',   last:'Yesterday', phone:'+15550002222' },
+  { id:3, name:'Carlos Reyes',    company:'Vantage Digital',   stage:'won',       value:8200,  owner:'Alex T.',  last:'2d ago',    phone:'+15550003333' },
+  { id:4, name:'Emma Fischer',    company:'Summit Goods',      stage:'qualified', value:5400,  owner:'Chris L.', last:'Today',     phone:'+15550004444' },
+  { id:5, name:'David Kim',       company:'Northfield Media',  stage:'won',       value:16000, owner:'Sam R.',   last:'3d ago',    phone:'+15550005555' },
+  { id:6, name:'Leila Hassan',    company:'Bridgewater Co.',   stage:'new',       value:9200,  owner:'Chris L.', last:'Today',     phone:'+15550006666' },
+  { id:7, name:'Tom Bright',      company:'Apex Solutions',    stage:'qualified', value:22000, owner:'Alex T.',  last:'Yesterday', phone:'+15550007777' },
+  { id:8, name:'Sofia Alvarez',   company:'Nova Creative',     stage:'proposal',  value:7800,  owner:'Sam R.',   last:'4d ago',    phone:'+15550008888' },
+  { id:9, name:'Ryan O\'Brien',   company:'Peak Logistics',    stage:'lost',      value:18000, owner:'Chris L.', last:'1w ago',    phone:'+15550009999' },
+  { id:10, name:'Nadia Park',     company:'Horizon Labs',      stage:'qualified', value:41000, owner:'Alex T.',  last:'Today',     phone:'+15550010000' },
+];
+
+const stageMap = {
+  new:       { label:'New',       badge:'badge-new' },
+  qualified: { label:'Qualified', badge:'badge-qualified' },
+  proposal:  { label:'Proposal',  badge:'badge-proposal' },
+  won:       { label:'Won',       badge:'badge-won' },
+  lost:      { label:'Lost',      badge:'badge-lost' },
+};
+
+function renderLeadsTable(data) {
+  const tbody = document.getElementById('leads-tbody');
+  tbody.innerHTML = data.map(l => `
+    <tr>
+      <td><strong>${l.name}</strong></td>
+      <td>${l.company}</td>
+      <td><span class="badge ${stageMap[l.stage].badge}">${stageMap[l.stage].label}</span></td>
+      <td style="color:var(--accent);font-family:'Syne',sans-serif;font-weight:600;">$${l.value.toLocaleString()}</td>
+      <td style="color:var(--muted)">${l.owner}</td>
+      <td style="color:var(--muted)">${l.last}</td>
+      <td>
+        <button class="btn btn-wa" style="padding:5px 10px;font-size:10px;" onclick="openWA('${l.phone}','${l.name}')">
+          💬 WhatsApp
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterLeads(q) {
+  const filtered = q ? leadsData.filter(l =>
+    l.name.toLowerCase().includes(q.toLowerCase()) ||
+    l.company.toLowerCase().includes(q.toLowerCase())
+  ) : leadsData;
+  renderLeadsTable(filtered);
+}
+
+function openWA(phone, name) {
+  const msg = encodeURIComponent(`Hi ${name.split(' ')[0]}, following up from TGR — `);
+  window.open(`https://wa.me/${phone.replace(/\D/g,'')}?text=${msg}`, '_blank');
+}
+
+/* ── KANBAN ── */
+function renderKanban() {
+  const stages = ['new','qualified','proposal','won','lost'];
+  const board = document.getElementById('kanban-board');
+  board.innerHTML = stages.map(stage => {
+    const cards = leadsData.filter(l => l.stage === stage);
+    return `
+      <div class="kanban-col">
+        <div class="kanban-header">
+          ${stageMap[stage].label}
+          <span class="kanban-count">${cards.length}</span>
+        </div>
+        <div class="kanban-cards">
+          ${cards.map(l => `
+            <div class="kanban-card">
+              <div class="kc-name">${l.name}</div>
+              <div class="kc-value">$${l.value.toLocaleString()}</div>
+              <div class="kc-date">${l.company}</div>
+              <div class="kc-actions">
+                <button class="kc-btn btn-wa" style="background:#25D366;color:#fff;" onclick="openWA('${l.phone}','${l.name}')">💬 WA</button>
+                <button class="kc-btn" style="background:var(--surface);border:1px solid var(--border);color:var(--muted);">Edit</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function addLead() {
+  const name = prompt('Lead name:');
+  if (!name) return;
+  const company = prompt('Company:') || '—';
+  leadsData.unshift({ id: Date.now(), name, company, stage:'new', value:0, owner:'—', last:'Just now', phone:'' });
+  renderKanban();
+  renderLeadsTable(leadsData);
+}
+
+renderKanban();
+renderLeadsTable(leadsData);
+
+/* ══════════════════════════════════════════
+   DRIVE EMBED
+══════════════════════════════════════════ */
+function loadDrive() {
+  const raw = document.getElementById('drive-url').value.trim();
+  if (!raw) return;
+
+  // Convert share URL → embed URL
+  let src = raw;
+  if (raw.includes('/drive/folders/')) {
+    const id = raw.match(/folders\/([^/?]+)/)?.[1];
+    if (id) src = `https://drive.google.com/embeddedfolderview?id=${id}#list`;
+  } else if (raw.includes('/file/d/')) {
+    const id = raw.match(/\/d\/([^/]+)/)?.[1];
+    if (id) src = `https://drive.google.com/file/d/${id}/preview`;
+  } else if (raw.includes('docs.google.com')) {
+    src = raw.includes('/edit') ? raw.replace('/edit', '/preview') : raw;
+  }
+
+  document.getElementById('drive-frame-wrap').innerHTML =
+    `<iframe class="drive-iframe" src="${src}" allowfullscreen></iframe>`;
+}
+
+function openDrive() {
+  const url = document.getElementById('drive-url').value.trim();
+  if (url) window.open(url, '_blank');
+}
+
+/* ══════════════════════════════════════════
+   AI INSIGHTS — GROQ
+══════════════════════════════════════════ */
+// Restore saved key
+(function() {
+  const k = sessionStorage.getItem('tgr_groq_key');
+  if (k) {
+    document.getElementById('groq-key').value = k;
+    document.getElementById('groq-key-status').textContent = '✓ Key loaded';
+    document.getElementById('groq-key-status').style.color = 'var(--success)';
+  }
+})();
+
+function saveGroqKey() {
+  const k = document.getElementById('groq-key').value.trim();
+  if (!k) return;
+  sessionStorage.setItem('tgr_groq_key', k);
+  document.getElementById('groq-key-status').textContent = '✓ Saved for session';
+  document.getElementById('groq-key-status').style.color = 'var(--success)';
+}
+
+function setPrompt(text) {
+  document.getElementById('ai-prompt').value = text;
+  document.getElementById('ai-prompt').focus();
+}
+
+function clearAI() {
+  document.getElementById('ai-messages').innerHTML = '';
+}
+
+// Supabase context snapshot (replace with real fetch from your Supabase instance)
+function getDataContext() {
+  return `
+LIVE SUPABASE SNAPSHOT (${new Date().toISOString()}):
+
+FINANCIALS
+- Monthly Revenue: $84,200
+- Monthly Expenses: $31,700
+- Net Margin: 62.4%
+- Revenue trend: Jan $61k, Feb $58k, Mar $72k, Apr $78k, May $84k
+
+CLIENTS (24 active)
+- 3 currently onboarding
+- Avg contract value: $9,800/mo
+
+PIPELINE (41 leads)
+- New: 2 leads ($21,200)
+- Qualified: 3 leads ($68,400)
+- Proposal: 2 leads ($42,300)
+- Won this month: 2 ($24,200)
+- Lost: 1 ($18,000)
+
+ONBOARDING
+- Summit Goods: blocked at intake questionnaire
+- Vantage Digital: provisioning phase
+- Northfield Media: kick-off scheduled tomorrow
+
+LEAD SOURCES
+- Referral: 42%  LinkedIn: 28%  Outbound: 18%  Inbound: 12%
+  `.trim();
+}
+
+async function sendAI() {
+  const prompt = document.getElementById('ai-prompt').value.trim();
+  if (!prompt) return;
+
+  const key = sessionStorage.getItem('tgr_groq_key') || document.getElementById('groq-key').value.trim();
+
+  const msgs = document.getElementById('ai-messages');
+
+  // User bubble
+  msgs.innerHTML += `
+    <div class="ai-msg user">
+      <div class="ai-msg-role user-role">You</div>
+      <div class="ai-msg-text">${prompt}</div>
+    </div>`;
+
+  // Typing indicator
+  const typingId = 'typing-' + Date.now();
+  msgs.innerHTML += `
+    <div class="ai-msg assistant" id="${typingId}">
+      <div class="ai-msg-role assistant-role">TGR AI</div>
+      <div class="ai-typing"><span></span><span></span><span></span></div>
+    </div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  document.getElementById('ai-prompt').value = '';
+
+  if (!key) {
+    document.getElementById(typingId).querySelector('.ai-typing').outerHTML =
+      `<div class="ai-msg-text" style="color:var(--warn);">No Groq API key set. Enter your key above and click Save Key.</div>`;
+    return;
+  }
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key}`
+      },
+      body: JSON.stringify({
+        model: 'llama3-70b-8192',
+        messages: [
+          {
+            role: 'system',
+            content: `You are TGR's internal AI analyst. You have access to live business data below. Be concise, direct, and actionable. Use plain language. Flag risks clearly.\n\n${getDataContext()}`
+          },
+          { role: 'user', content: prompt }
+        ],
+        max_tokens: 600,
+        temperature: 0.3
+      })
+    });
+
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content || data.error?.message || 'No response.';
+
+    const formatted = reply.split('\n').filter(Boolean).map(l => `<p>${l}</p>`).join('');
+    const node = document.getElementById(typingId);
+    node.querySelector('.ai-typing').outerHTML = `<div class="ai-msg-text">${formatted}</div>`;
+
+  } catch(e) {
+    document.getElementById(typingId).querySelector('.ai-typing').outerHTML =
+      `<div class="ai-msg-text" style="color:var(--danger);">Error: ${e.message}</div>`;
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+/* ══════════════════════════════════════════
+   MISC
+══════════════════════════════════════════ */
+function refresh() {
+  const btn = document.querySelector('.btn-ghost');
+  btn.textContent = '↺ Refreshing…';
+  setTimeout(() => { btn.textContent = '↺ Refresh'; }, 1200);
+}
+</script>
+</body>
+</html>
