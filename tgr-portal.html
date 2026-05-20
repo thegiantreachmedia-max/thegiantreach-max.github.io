@@ -496,7 +496,11 @@ const sb = createClient(CFG.SUPA_URL, CFG.SUPA_ANON);
       </div>
     </div>
 
-    <div class="notice info"><strong>🔍 What happens next:</strong> We verify your receipt within 2–4 hours. You'll receive an email with your dashboard login once approved.</div>
+    <div class="notice info" style="margin-bottom:10px"><strong>🔍 What happens next:</strong> We verify your receipt within 2–4 hours. You'll receive an email with your dashboard login once approved.</div>
+<div style="background:#f9fafb;border:1px solid var(--border);border-radius:var(--rs);padding:12px 15px;font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:18px">
+  🔒 <strong style="color:var(--ink3)">Privacy:</strong> Your details and receipt are stored securely and used only to verify your payment and set up your account. We do not share your information with third parties. By submitting you agree to our 
+  <a href="https://thegiantreach.com/privacy.html" target="_blank" style="color:var(--blue);text-decoration:underline">Privacy Policy</a>.
+</div>
     <div class="brow">
       <button class="btn btn-ol" onclick="nav('payment')">← Back</button>
       <button class="btn btn-ink btn-full" onclick="submitReceipt()" id="subBtn">Submit Receipt →</button>
@@ -654,6 +658,12 @@ const sb = createClient(CFG.SUPA_URL, CFG.SUPA_ANON);
   <div class="dash-shell" id="clientShell">
     <!-- Sidebar -->
     <aside class="dash-sidebar">
+       <div style="display:flex;justify-content:flex-end;padding:12px 12px 0;border-bottom:1px solid var(--border);margin-bottom:4px">
+  <button onclick="toggleSidebar('clientShell')" 
+    style="background:none;border:1.5px solid var(--border2);border-radius:6px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--mid);font-family:var(--fb);font-weight:600">
+    ✕ Close
+  </button>
+</div>
       <div class="sidebar-section">
         <div class="sidebar-section-label">My Project</div>
         <a class="sidebar-link cur" onclick="clientPanel('overview')" id="sl-overview"><span class="ico">📊</span> Overview</a>
@@ -671,7 +681,7 @@ const sb = createClient(CFG.SUPA_URL, CFG.SUPA_ANON);
     <!-- Main content -->
     <main class="dash-main">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px">
-        <button class="menu-toggle" onclick="toggleSidebar('clientShell')">☰</button>
+       <button class="menu-toggle" id="menuToggleBtn" onclick="toggleSidebar('clientShell')">☰</button>
         <div style="font-family:var(--fd);font-size:20px;font-weight:900;color:var(--ink)" id="clientDashTitle">My Dashboard</div>
         <div id="clientStatusChip"></div>
       </div>
@@ -1654,12 +1664,33 @@ async function loadClientDeliverables(clientId) {
     const { data } = await sb.from('deliverables').select('*').eq('client_id', clientId).order('sort_order');
     const el = document.getElementById('clientDeliverables');
     if(!data?.length) { el.innerHTML='<div class="empty"><div class="ei">📋</div><p>Deliverables will appear here once setup begins.</p></div>'; return; }
-    el.innerHTML = data.map(d=>`
-      <div class="del-item ${d.status}">
-        <div class="del-check">${d.status==='completed'?'✓':d.status==='in_progress'?'▶':'○'}</div>
-        <div class="del-title">${d.title}</div>
-        ${chipFor(d.status)}
-      </div>`).join('');
+  const total = data.length;
+  const done = data.filter(d => d.status === 'completed').length;
+  const inprog = data.filter(d => d.status === 'in_progress').length;
+  const pct = Math.round((done / total) * 100);
+
+  const progressBar = `
+    <div style="background:white;border:1.5px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:16px;box-shadow:var(--sh)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:13px;font-weight:700;color:var(--ink)">Overall Progress</span>
+        <span style="font-size:13px;font-weight:700;color:var(--green)">${done}/${total} completed</span>
+      </div>
+      <div style="background:var(--light);border-radius:20px;height:10px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--green),#34d399);border-radius:20px;transition:width 0.6s ease"></div>
+      </div>
+      <div style="display:flex;gap:16px;margin-top:10px;font-size:12px;color:var(--mid)">
+        <span>✓ ${done} done</span>
+        ${inprog > 0 ? `<span style="color:var(--blue)">▶ ${inprog} in progress</span>` : ''}
+        <span>○ ${total - done - inprog} pending</span>
+      </div>
+    </div>`;
+
+  el.innerHTML = progressBar + data.map(d => `
+    <div class="del-item ${d.status === 'completed' ? 'done' : d.status === 'in_progress' ? 'inprog' : ''}">
+      <div class="del-check">${d.status === 'completed' ? '✓' : d.status === 'in_progress' ? '▶' : '○'}</div>
+      <div class="del-title">${d.title}</div>
+      <div style="margin-left:auto">${chipFor(d.status)}</div>
+    </div>`).join('');
   } catch(e) { document.getElementById('clientDeliverables').innerHTML=`<div class="notice err">Error loading deliverables.</div>`; }
 }
 
@@ -1684,11 +1715,31 @@ async function loadClientRequirements(clientId) {
       .eq('client_id', clientId);
     const el = document.getElementById('clientRequirements');
     if(!data?.length) { el.innerHTML='<div class="empty"><div class="ei">🔧</div><p>No access info submitted yet.</p></div>'; return; }
-    el.innerHTML = data.map(r=>{
-      const lbl = r.service_requirements?.field_label || r.field_key;
-      const isPass = r.service_requirements?.field_type==='password';
-      return `<div class="req-field"><div class="req-label">${lbl}</div><div class="req-val ${r.field_value?'':'empty-val'}">${isPass?'••••••••':(r.field_value||'Not provided')}</div></div>`;
-    }).join('');
+  const filled = data.filter(r => r.field_value?.trim()).length;
+  el.innerHTML = `
+    <div class="notice ok" style="margin-bottom:16px">
+      ✅ <strong>${filled} of ${data.length}</strong> access details submitted.
+      Our team has received everything needed to begin setup.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${data.map(r => {
+        const lbl = r.service_requirements?.field_label || r.field_key;
+        const isPass = r.service_requirements?.field_type === 'password';
+        const val = r.field_value?.trim();
+        return `
+          <div style="display:flex;align-items:center;gap:12px;background:white;border:1.5px solid ${val ? 'var(--green-b)' : 'var(--border)'};border-radius:var(--rs);padding:12px 16px">
+            <div style="width:22px;height:22px;border-radius:50%;background:${val ? 'var(--green)' : 'var(--border2)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;color:white;font-weight:700">
+              ${val ? '✓' : '○'}
+            </div>
+            <div style="flex:1">
+              <div style="font-size:11px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:2px">${lbl}</div>
+              <div style="font-size:13px;color:var(--ink);font-weight:500;word-break:break-all">
+                ${isPass ? '••••••••' : (val || '<span style="color:var(--mid);font-style:italic">Not provided</span>')}
+              </div>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>`;
   } catch(e) {}
 }
 
