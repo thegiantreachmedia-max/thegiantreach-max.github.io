@@ -1856,7 +1856,7 @@ function renderAdminPending(payments) {
       </div>
       <div class="cc-acts">
         <button class="btn btn-ol btn-sm" onclick="viewReceipt('${p.receipt_url || ''}')">📄 View Receipt</button>
-        <button class="btn btn-ok btn-sm" onclick="approvePayment('${p.id}','${p.client_id}','${p.clients?.contact_person || ''}','${p.clients?.email || ''}','${p.clients?.phone || ''}')">✅ Approve</button>
+        <button class="btn btn-ok btn-sm" onclick="approvePayment('${p.id}','${p.client_id}','${p.clients?.contact_person || ''}','${p.clients?.email || ''}','${p.clients?.phone || ''}', this)">✅ Approve</button>
         <button class="btn btn-err btn-sm" onclick="openRejectModal('${p.id}','${p.client_id}')">✕ Reject</button>
       </div>
     </div>`).join('');
@@ -1989,7 +1989,8 @@ function adminNav(panel) {
 }
 
 // ── Approve payment ──
-async function approvePayment(payId, clientId, clientName, clientEmail, clientPhone) {
+async function approvePayment(payId, clientId, clientName, clientEmail, clientPhone, btn) {
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Approving…'; }
   try {
     // 1. Update payment + client status — this is the critical part
     await sb.from('payments').update({
