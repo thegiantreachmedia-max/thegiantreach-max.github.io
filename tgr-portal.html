@@ -341,6 +341,12 @@ body{background:var(--white);color:var(--ink);font-family:var(--fb);font-size:15
   #clientDetailContent [style*="minmax(200px"]{grid-template-columns:1fr 1fr!important}
 }
 @media (min-width:769px){.admin-menu-toggle{display:none!important}}
+   @media(max-width:768px){
+  #p-admin-dash main{margin-left:0!important;padding:16px!important}
+  #clientDetailContent [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;display:grid!important}
+  #clientDetailContent [style*="repeat(auto-fill,minmax(200px"]{grid-template-columns:1fr 1fr!important}
+  #clientDetailContent [style*="display:grid"]{grid-template-columns:1fr!important}
+   }
 </style>
 </head>
 <body>
