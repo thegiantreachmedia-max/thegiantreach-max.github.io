@@ -2523,7 +2523,6 @@ function closeModal(id) { document.getElementById(id)?.classList.remove('on'); }
 function toggleSidebar(id) { document.getElementById(id)?.classList.toggle('open'); }
 
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('on'); }));
-document.getElementById('adminOverlay').addEventListener('click', function(e){ if(!document.getElementById('adminSidebar').contains(e.target)) toggleAdminSidebar(); });
    document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.overlay.on').forEach(m=>m.classList.remove('on')); });
 
 // ─── Handle ?onboard= link ───
