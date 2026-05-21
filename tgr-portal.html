@@ -2100,7 +2100,22 @@ async function viewClientDetail(clientId) {
     el.innerHTML = `<div class="notice err">Error loading client: ${e.message}</div>`;
   }
 }
-
+async function verifyAccessItem(accessId, clientId) {
+  try {
+    const { error } = await sb
+      .from('client_access_info')
+      .update({ 
+        status: 'verified', 
+        verified_at: new Date().toISOString() 
+      })
+      .eq('id', accessId);
+    if (error) throw error;
+    toast('Access verified successfully.', 'ok');
+    viewClientDetail(clientId);
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+  }
+   }
 // ── Admin navigation ──
 function adminNav(panel) {
   document.querySelectorAll('#ap-overview,#ap-pending,#ap-client').forEach(p => p.classList.remove('on'));
