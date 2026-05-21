@@ -743,6 +743,8 @@ const sb = createClient(CFG.SUPA_URL, CFG.SUPA_ANON);
   <div style="display:flex;min-height:100vh;padding-top:58px">
 
     <!-- LEFT: Client List Sidebar -->
+     <button class="admin-menu-toggle" onclick="toggleAdminSidebar()" style="display:none;position:fixed;top:14px;left:14px;z-index:201;background:var(--ink);color:white;border:none;width:40px;height:40px;border-radius:8px;font-size:20px;cursor:pointer;align-items:center;justify-content:center">☰</button>
+<div class="admin-sidebar-overlay" id="adminOverlay" onclick="toggleAdminSidebar()"></div>
     <aside id="adminSidebar" style="width:280px;flex-shrink:0;border-right:1px solid var(--border);background:var(--light);display:flex;flex-direction:column;position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;z-index:50">
       <!-- Sidebar Header -->
       <div style="padding:16px;border-bottom:1px solid var(--border);background:var(--ink);color:white">
@@ -2127,6 +2129,10 @@ async function verifyAccessItem(accessId, clientId) {
   } catch(e) {
     toast('Error: ' + e.message, 'err');
   }
+   }
+   function toggleAdminSidebar(){
+  document.getElementById('adminSidebar').classList.toggle('open');
+  document.getElementById('adminOverlay').classList.toggle('show');
    }
 // ── Admin navigation ──
 function adminNav(panel) {
