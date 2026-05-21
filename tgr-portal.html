@@ -1798,21 +1798,29 @@ function chipForAccess(status) {
 }
 
 async function submitAccessItem(accessId, clientId) {
-  const input = document.getElementById(`access-input-${accessId}`);
+  const input = document.getElementById('access-input-' + accessId);
   const value = input?.value?.trim();
   if (!value) { toast('Please enter your access details first.', 'err'); return; }
   input.disabled = true;
   try {
-    const { error } = await sb
+    const { data, error } = await sb
       .from('client_access_info')
-      .update({ client_value: value, status: 'submitted', submitted_at: new Date().toISOString() })
-      .eq('id', accessId);
+      .update({ 
+        client_value: value, 
+        status: 'submitted', 
+        submitted_at: new Date().toISOString() 
+      })
+      .eq('id', accessId)
+      .select();
     if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('No rows updated — check client_id match');
+    }
     toast('Access submitted! Opeyemi will verify shortly.', 'ok');
     loadClientRequirements(clientId);
   } catch(e) {
     input.disabled = false;
-    toast('Error submitting. Try again.', 'err');
+    toast('Error: ' + e.message, 'err');
   }
 }
 
