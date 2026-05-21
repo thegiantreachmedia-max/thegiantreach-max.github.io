@@ -2019,7 +2019,41 @@ if (inviteErr) console.warn('Invite warning:', inviteErr.message);
         await sb.from('clients').update({ user_id: existingUser.id }).eq('id', clientId);
       }
     } catch(profileErr) { console.warn('Profile link skipped:', profileErr.message); }
+// Auto-populate deliverables from service_deliverables template
+    try {
+      const { data: clientData } = await sb
+        .from('clients')
+        .select('service_id')
+        .eq('id', clientId)
+        .single();
 
+      if (clientData?.service_id) {
+        const { data: templates } = await sb
+          .from('service_deliverables')
+          .select('*')
+          .eq('service_id', clientData.service_id)
+          .order('sort_order');
+
+        if (templates?.length) {
+          await sb.from('deliverables')
+            .delete()
+            .eq('client_id', clientId);
+
+          const rows = templates.map(t => ({
+            client_id: clientId,
+            service_id: clientData.service_id,
+            title: t.title,
+            description: t.description,
+            status: 'pending',
+            sort_order: t.sort_order,
+          }));
+
+          await sb.from('deliverables').insert(rows);
+        }
+      }
+    } catch (delErr) {
+      console.warn('Deliverables auto-populate skipped:', delErr.message);
+    }
     // 4. Show success IMMEDIATELY — no waiting
     toast(`✅ ${clientName} approved! Password setup email sent.`, 'ok');
     loadAdminDashboard();
