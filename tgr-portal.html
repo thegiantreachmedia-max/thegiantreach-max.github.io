@@ -2156,15 +2156,6 @@ function adminNav(panel) {
   document.getElementById('ap-' + panel)?.classList.add('on');
   document.querySelectorAll('#adminSidebar .sidebar-link[id^="anav-"]').forEach(l => l.classList.remove('cur'));
   document.getElementById('anav-' + panel)?.classList.add('cur');
-  if(window.innerWidth <= 768){
-    const sidebar = document.getElementById('adminSidebar');
-    const overlay = document.getElementById('adminOverlay');
-    if(sidebar.classList.contains('open')){
-      sidebar.classList.remove('open');
-      sidebar.style.left = '-280px';
-      overlay.classList.remove('show');
-    }
-  }
 }
 // ── Approve payment ──
 async function approvePayment(payId, clientId, clientName, clientEmail, clientPhone, btn) {
