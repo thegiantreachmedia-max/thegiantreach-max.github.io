@@ -2138,9 +2138,21 @@ async function verifyAccessItem(accessId, clientId) {
   }
    }
    function toggleAdminSidebar(){
-  document.getElementById('adminSidebar').classList.toggle('open');
-  document.getElementById('adminOverlay').classList.toggle('show');
-   }
+  const sidebar = document.getElementById('adminSidebar');
+  const overlay = document.getElementById('adminOverlay');
+  const isOpen = sidebar.classList.contains('open');
+  if(isOpen){
+    sidebar.classList.remove('open');
+    sidebar.style.left = '-280px';
+    overlay.classList.remove('show');
+    overlay.style.display = 'none';
+  } else {
+    sidebar.classList.add('open');
+    sidebar.style.left = '0';
+    overlay.classList.add('show');
+    overlay.style.display = 'block';
+  }
+}
 // ── Admin navigation ──
 function adminNav(panel) {
   document.querySelectorAll('#ap-overview,#ap-pending,#ap-client').forEach(p => p.classList.remove('on'));
