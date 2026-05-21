@@ -1963,12 +1963,7 @@ function renderAdminPending(payments) {
       </div>
     </div>`).join('');
 }
-if(window.innerWidth <= 768){
-  const s=document.getElementById('adminSidebar');
-  const o=document.getElementById('adminOverlay');
-  s.classList.remove('open');s.style.left='-280px';
-  o.classList.remove('show');o.style.display='none';
-}
+
 // ── View individual client ──
 async function viewClientDetail(clientId) {
   // Highlight sidebar
