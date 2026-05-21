@@ -347,6 +347,7 @@ body{background:var(--white);color:var(--ink);font-family:var(--fb);font-size:15
   #clientDetailContent [style*="repeat(auto-fill,minmax(200px"]{grid-template-columns:1fr 1fr!important}
   #clientDetailContent [style*="display:grid"]{grid-template-columns:1fr!important}
    }
+   @media(max-width:768px){#adminSidebarCloseBtn{display:block!important}}
 </style>
 </head>
 <body>
@@ -757,7 +758,7 @@ const sb = createClient(CFG.SUPA_URL, CFG.SUPA_ANON);
         <div style="font-family:var(--fd);font-size:16px;font-weight:900">The Giant Reach</div>
         <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">Admin · Client Manager</div>
       </div>
-
+<button onclick="toggleAdminSidebar()" id="adminSidebarCloseBtn" style="display:none;background:rgba(255,255,255,.1);border:none;color:white;width:calc(100% - 32px);margin:8px 16px;padding:8px;border-radius:6px;cursor:pointer;font-size:13px">✕ Close Menu</button>
       <!-- Nav links -->
       <div style="padding:10px 8px;border-bottom:1px solid var(--border)">
         <a class="sidebar-link cur" id="anav-overview" onclick="adminNav('overview')"><span class="ico">📊</span> Overview</a>
