@@ -2159,6 +2159,14 @@ function adminNav(panel) {
   document.getElementById('ap-' + panel)?.classList.add('on');
   document.querySelectorAll('#adminSidebar .sidebar-link[id^="anav-"]').forEach(l => l.classList.remove('cur'));
   document.getElementById('anav-' + panel)?.classList.add('cur');
+  if(window.innerWidth <= 768){
+    const sidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('adminOverlay');
+    sidebar.classList.remove('open');
+    sidebar.style.left = '-280px';
+    overlay.classList.remove('show');
+    overlay.style.display = 'none';
+  }
 }
 
 // ── Approve payment ──
