@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Admin — The Giant Reach</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/webp" href="favicon.webp">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+body { padding-top: 64px; }
+
+/* Login Screen */
+#login-screen {
+  display: flex; align-items: center; justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding: 2rem;
+}
+.login-box {
+  background: var(--navy-mid);
+  border: 1px solid rgba(201,168,76,0.2);
+  padding: 3rem;
+  width: 100%; max-width: 380px;
+}
+.login-box h2 { margin-bottom: 0.5rem; font-size: 1.5rem; }
+.login-box p { font-size: 0.83rem; color: var(--gray); margin-bottom: 2rem; }
+
+/* Admin layout */
+#admin-panel { display: none; }
+.admin-wrap {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 64px);
+}
+.admin-sidebar {
+  background: var(--navy-deep);
+  border-right: 1px solid rgba(201,168,76,0.08);
+  padding: 1.5rem 1rem;
+  position: sticky; top: 64px;
+  height: calc(100vh - 64px); overflow-y: auto;
+}
+.admin-sidebar .sidebar-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem; font-weight: 700; color: var(--gold);
+  padding: 0 0.5rem 1.2rem;
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+  margin-bottom: 1rem;
+}
+.sidebar-section-title {
+  font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: rgba(138,154,181,0.5); padding: 0.5rem 0.5rem 0.3rem;
+}
+.sidebar-btn {
+  display: flex; align-items: center; gap: 0.6rem;
+  width: 100%; padding: 0.6rem 0.8rem;
+  background: none; border: none; cursor: pointer;
+  color: var(--gray); font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem; font-weight: 300;
+  border-radius: 4px; transition: background 0.2s, color 0.2s;
+  text-align: left;
+}
+.sidebar-btn:hover { background: rgba(201,168,76,0.06); color: var(--white); }
+.sidebar-btn.active { background: rgba(201,168,76,0.1); color: var(--gold); }
+.sidebar-btn .sb-icon { width: 18px; text-align: center; font-size: 0.9rem; }
+.sidebar-divider { border: none; border-top: 1px solid rgba(201,168,76,0.08); margin: 0.8rem 0; }
+.logout-btn { color: var(--red) !important; }
+.logout-btn:hover { background: rgba(224,90,90,0.08) !important; }
+
+/* Main content */
+.admin-main { padding: 2.5rem; overflow-y: auto; }
+
+/* Views */
+.view { display: none; }
+.view.active { display: block; }
+
+.view-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+}
+.view-header h1 { font-size: 1.7rem; }
+
+/* Post List */
+.post-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.post-item {
+  display: flex; align-items: center;
+  background: var(--navy-mid); border: 1px solid rgba(201,168,76,0.08);
+  padding: 1rem 1.4rem; gap: 1.5rem; flex-wrap: wrap;
+  border-radius: 2px;
+  transition: border-color 0.2s;
+}
+.post-item:hover { border-color: rgba(201,168,76,0.2); }
+.post-item-info { flex: 1; min-width: 200px; }
+.post-item-title { font-size: 0.92rem; font-weight: 500; color: var(--white); margin-bottom: 0.25rem; }
+.post-item-meta { font-size: 0.72rem; color: var(--gray); display: flex; gap: 0.8rem; flex-wrap: wrap; }
+.post-item-meta .cat-badge { background: var(--gold-dim); color: var(--gold); padding: 0.1rem 0.5rem; font-size: 0.63rem; letter-spacing: 0.08em; }
+.post-actions { display: flex; gap: 0.5rem; }
+
+/* Editor */
+.editor-grid { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; }
+.editor-main { display: flex; flex-direction: column; gap: 1.2rem; }
+.editor-sidebar-panel { display: flex; flex-direction: column; gap: 1rem; }
+.editor-panel {
+  background: var(--navy-mid); border: 1px solid rgba(201,168,76,0.1);
+  padding: 1.5rem; border-radius: 2px;
+}
+.editor-panel h4 { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+
+#post-body {
+  min-height: 400px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+/* Toolbar */
+.editor-toolbar {
+  display: flex; gap: 0.3rem; flex-wrap: wrap;
+  padding: 0.6rem;
+  background: var(--navy-mid);
+  border: 1px solid rgba(201,168,76,0.12);
+  border-bottom: none;
+}
+.tb-btn {
+  background: none; border: 1px solid rgba(201,168,76,0.12);
+  color: var(--gray); padding: 0.3rem 0.6rem;
+  font-size: 0.75rem; cursor: pointer;
+  border-radius: 2px; transition: background 0.2s, color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.tb-btn:hover { background: var(--gold-dim); color: var(--gold); }
+.tb-sep { width: 1px; background: rgba(201,168,76,0.12); margin: 0 0.2rem; }
+
+/* Preview */
+.preview-content {
+  background: var(--navy-mid);
+  border: 1px solid rgba(201,168,76,0.1);
+  padding: 2.5rem;
+  min-height: 400px;
+}
+.preview-content h1,h2,h3 { color: var(--white); font-family: 'Playfair Display', serif; }
+.preview-content p { color: var(--gray); line-height: 1.85; margin-bottom: 1rem; font-size: 0.93rem; }
+.preview-content ul, .preview-content ol { color: var(--gray); padding-left: 1.5rem; margin-bottom: 1rem; }
+.preview-content li { line-height: 1.7; font-size: 0.9rem; margin-bottom: 0.4rem; }
+.preview-content a { color: var(--gold); }
+.preview-content blockquote { border-left: 3px solid var(--gold); padding: 1rem 1.5rem; background: rgba(201,168,76,0.04); margin: 1.5rem 0; font-style: italic; color: var(--white); }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: var(--navy-mid); border: 1px solid rgba(201,168,76,0.1); padding: 1.5rem; }
+.stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--gold); }
+.stat-label { font-size: 0.72rem; color: var(--gray); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.3rem; }
+
+/* Category colors */
+.cat-immigration-marketing { border-color: #4a9eff20; }
+.cat-lead-generation { border-color: #4caf8420; }
+.cat-crm-automation { border-color: #c9a84c20; }
+.cat-analytics-tracking { border-color: #9c4aff20; }
+.cat-business-growth { border-color: #ff6b4a20; }
+
+/* Notice */
+.notice {
+  padding: 1rem 1.4rem;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  display: none;
+}
+.notice.success { background: rgba(76,175,132,0.1); border: 1px solid rgba(76,175,132,0.3); color: var(--green); }
+.notice.error { background: rgba(224,90,90,0.1); border: 1px solid rgba(224,90,90,0.3); color: var(--red); }
+.notice.show { display: block; }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--gray); }
+.empty-state .big-icon { font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; }
+.empty-state h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--white); margin-bottom: 0.5rem; }
+.empty-state p { font-size: 0.85rem; }
+
+/* Search */
+.search-bar {
+  display: flex; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.search-bar input { flex: 1; min-width: 200px; }
+.search-bar select { width: auto; }
+
+@media (max-width: 900px) {
+  .admin-wrap { grid-template-columns: 1fr; }
+  .admin-sidebar { position: static; height: auto; }
+  .editor-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo"><img src="logo.webp" alt="The Giant Reach"/></a>
+  <div class="nav-links">
+    <a href="index.html">← Back to Site</a>
+    <span style="color:var(--gold);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;padding:0 0.5rem;">Blog Admin</span>
+  </div>
+</nav>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="eyebrow">The Giant Reach</div>
+    <h2>Admin Login</h2>
+    <p>Enter your admin password to access the blog management panel.</p>
+    <div id="login-notice" class="notice error"></div>
+    <div class="form-field">
+      <label>Password</label>
+      <input type="password" id="admin-password" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;" onclick="doLogin()">Login →</button>
+    <p style="font-size:0.72rem;color:var(--gray);text-align:center;margin-top:1.2rem;">Default password: <code style="color:var(--gold);">tgr-admin-2025</code><br>Change it in Settings after first login.</p>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <div class="admin-wrap">
+
+    <!-- SIDEBAR -->
+    <div class="admin-sidebar">
+      <div class="sidebar-logo">The Giant Reach<br><span style="font-size:0.65rem;color:var(--gray);font-family:'DM Sans',sans-serif;font-weight:300;">Blog Admin</span></div>
+
+      <div class="sidebar-section-title">Content</div>
+      <button class="sidebar-btn active" onclick="showView('dashboard')" id="btn-dashboard"><span class="sb-icon">📊</span> Dashboard</button>
+      <button class="sidebar-btn" onclick="showView('posts')" id="btn-posts"><span class="sb-icon">📝</span> All Posts</button>
+      <button class="sidebar-btn" onclick="newPost()" id="btn-new"><span class="sb-icon">✏️</span> New Post</button>
+
+      <hr class="sidebar-divider">
+      <div class="sidebar-section-title">Site</div>
+      <button class="sidebar-btn" onclick="showView('sitemap')"><span class="sb-icon">🗺️</span> Sitemap</button>
+      <button class="sidebar-btn" onclick="showView('settings')"><span class="sb-icon">⚙️</span> Settings</button>
+      <a href="blog.html" class="sidebar-btn" target="_blank" style="display:flex;"><span class="sb-icon">👁️</span> View Blog</a>
+      <a href="index.html" class="sidebar-btn" target="_blank" style="display:flex;"><span class="sb-icon">🏠</span> View Site</a>
+
+      <hr class="sidebar-divider">
+      <button class="sidebar-btn logout-btn" onclick="doLogout()"><span class="sb-icon">🚪</span> Logout</button>
+    </div>
+
+    <!-- MAIN -->
+    <div class="admin-main">
+
+      <!-- DASHBOARD -->
+      <div class="view active" id="view-dashboard">
+        <h1>Dashboard</h1>
+        <div class="stats-grid" id="stats-grid"></div>
+        <h3 style="margin-bottom:1rem;font-size:1rem;">Recent Posts</h3>
+        <div id="recent-posts-list"></div>
+      </div>
+
+      <!-- POSTS LIST -->
+      <div class="view" id="view-posts">
+        <div class="view-header">
+          <h1>All Posts</h1>
+          <button class="btn btn-primary btn-sm" onclick="newPost()">+ New Post</button>
+        </div>
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search posts..." onkeyup="renderPostList()" style="max-width:300px;">
+          <select id="cat-filter" onchange="renderPostList()" style="max-width:200px;">
+            <option value="">All Categories</option>
+            <option value="Immigration Marketing">Immigration Marketing</option>
+            <option value="Lead Generation">Lead Generation</option>
+            <option value="CRM & Automation">CRM & Automation</option>
+            <option value="Analytics & Tracking">Analytics & Tracking</option>
+            <option value="Business Growth">Business Growth</option>
+          </select>
+        </div>
+        <div class="notice" id="posts-notice"></div>
+        <div id="posts-list"></div>
+      </div>
+
+      <!-- EDITOR -->
+      <div class="view" id="view-editor">
+        <div class="view-header">
+          <h1 id="editor-title-heading">New Post</h1>
+          <div style="display:flex;gap:0.6rem;">
+            <button class="btn btn-ghost btn-sm" onclick="togglePreview()">Preview</button>
+            <button class="btn btn-outline btn-sm" onclick="saveDraft()">Save Draft</button>
+            <button class="btn btn-primary btn-sm" onclick="publishPost()">Publish →</button>
+          </div>
+        </div>
+
+        <div class="notice" id="editor-notice"></div>
+
+        <div class="editor-grid" id="editor-write-mode">
+          <div class="editor-main">
+            <!-- Title -->
+            <div class="form-field" style="margin-bottom:0;">
+              <label>Post Title *</label>
+              <input type="text" id="post-title" placeholder="e.g. How Immigration Agencies Can Track Every Lead Source" style="font-size:1.1rem;font-family:'Playfair Display',serif;"/>
+            </div>
+
+            <!-- Slug -->
+            <div class="form-field">
+              <label>URL Slug (auto-generated)</label>
+              <input type="text" id="post-slug" placeholder="how-immigration-agencies-track-leads"/>
+            </div>
+
+            <!-- Toolbar -->
+            <div>
+              <div class="editor-toolbar">
+                <button class="tb-btn" onclick="fmt('bold')" title="Bold"><strong>B</strong></button>
+                <button class="tb-btn" onclick="fmt('italic')" title="Italic"><em>I</em></button>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" onclick="insertHeading('h2')" title="Heading 2">H2</button>
+                <button class="tb-btn" onclick="insertHeading('h3')" title="Heading 3">H3</button>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" onclick="insertList('ul')" title="Bullet List">• List</button>
+                <button class="tb-btn" onclick="insertList('ol')" title="Numbered List">1. List</button>
+                <button class="tb-btn" onclick="insertQuote()" title="Blockquote">" Quote</button>
+                <div class="tb-sep"></div>
+                <button class="tb-btn" onclick="insertLink()" title="Link">🔗 Link</button>
+                <button class="tb-btn" onclick="insertHR()" title="Divider">― HR</button>
+              </div>
+              <div class="form-field" style="margin-bottom:0;">
+                <label style="display:none;">Content *</label>
+                <textarea id="post-body" class="form-field input" placeholder="Write your article content here using Markdown or HTML...
+
+Use ## for H2 headings, ### for H3
+**bold**, *italic*
+- bullet list items
+1. numbered items
+> blockquotes
+
+Or use the toolbar above."></textarea>
+              </div>
+            </div>
+
+            <!-- Excerpt -->
+            <div class="form-field">
+              <label>Excerpt (shown on blog listing) *</label>
+              <textarea id="post-excerpt" placeholder="A 1-2 sentence summary for the blog listing page..." style="min-height:80px;"></textarea>
+            </div>
+          </div>
+
+          <!-- Right Sidebar -->
+          <div class="editor-sidebar-panel">
+            <div class="editor-panel">
+              <h4>Publish</h4>
+              <div class="form-field">
+                <label>Status</label>
+                <select id="post-status">
+                  <option value="published">Published</option>
+                  <option value="draft">Draft</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Publish Date</label>
+                <input type="date" id="post-date"/>
+              </div>
+            </div>
+
+            <div class="editor-panel">
+              <h4>Category *</h4>
+              <div class="form-field" style="margin-bottom:0;">
+                <select id="post-category">
+                  <option value="">Select a category</option>
+                  <option value="Immigration Marketing">Immigration Marketing</option>
+                  <option value="Lead Generation">Lead Generation</option>
+                  <option value="CRM & Automation">CRM & Automation</option>
+                  <option value="Analytics & Tracking">Analytics & Tracking</option>
+                  <option value="Business Growth">Business Growth</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="editor-panel">
+              <h4>Tags</h4>
+              <div class="form-field" style="margin-bottom:0;">
+                <input type="text" id="post-tags" placeholder="immigration, CRM, leads (comma-separated)"/>
+              </div>
+            </div>
+
+            <div class="editor-panel">
+              <h4>Featured Image URL</h4>
+              <div class="form-field" style="margin-bottom:0;">
+                <input type="url" id="post-image" placeholder="https://..."/>
+              </div>
+              <p style="font-size:0.72rem;color:var(--gray);margin-top:0.6rem;">Paste an image URL from Cloudinary or any host.</p>
+            </div>
+
+            <div class="editor-panel">
+              <h4>SEO</h4>
+              <div class="form-field">
+                <label>SEO Title</label>
+                <input type="text" id="post-seo-title" placeholder="Leave blank to use post title"/>
+              </div>
+              <div class="form-field" style="margin-bottom:0;">
+                <label>Meta Description</label>
+                <textarea id="post-meta-desc" placeholder="150-160 char description for Google..." style="min-height:80px;"></textarea>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="publishPost()">Publish Post →</button>
+            <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;" onclick="saveDraft()">Save as Draft</button>
+            <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;color:var(--red);" onclick="deleteCurrentPost()">Delete Post</button>
+          </div>
+        </div>
+
+        <!-- Preview mode -->
+        <div id="editor-preview-mode" style="display:none;">
+          <div class="preview-content" id="preview-content"></div>
+          <div style="margin-top:1rem;">
+            <button class="btn btn-ghost btn-sm" onclick="togglePreview()">← Back to Editor</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SITEMAP -->
+      <div class="view" id="view-sitemap">
+        <div class="view-header">
+          <h1>XML Sitemap</h1>
+          <button class="btn btn-primary btn-sm" onclick="downloadSitemap()">Download sitemap.xml</button>
+        </div>
+        <p style="font-size:0.85rem;color:var(--gray);margin-bottom:1.5rem;">This sitemap is auto-generated from all published posts plus your core pages. Download and upload to your site root.</p>
+        <div class="editor-panel">
+          <h4>Generated Sitemap</h4>
+          <pre id="sitemap-preview" style="font-size:0.72rem;color:var(--gray-lt);overflow-x:auto;white-space:pre-wrap;line-height:1.6;margin-top:0.8rem;"></pre>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="view" id="view-settings">
+        <h1>Settings</h1>
+        <div style="max-width:500px;">
+          <div class="editor-panel" style="margin-bottom:1.5rem;">
+            <h4>Change Admin Password</h4>
+            <div class="form-field">
+              <label>Current Password</label>
+              <input type="password" id="cur-pw" placeholder="Current password"/>
+            </div>
+            <div class="form-field">
+              <label>New Password</label>
+              <input type="password" id="new-pw" placeholder="New password"/>
+            </div>
+            <div class="form-field" style="margin-bottom:0;">
+              <label>Confirm New Password</label>
+              <input type="password" id="confirm-pw" placeholder="Confirm new password"/>
+            </div>
+            <button class="btn btn-primary btn-sm" style="margin-top:1rem;" onclick="changePassword()">Update Password</button>
+            <div class="notice" id="pw-notice" style="margin-top:0.8rem;"></div>
+          </div>
+
+          <div class="editor-panel">
+            <h4>Data Management</h4>
+            <p style="font-size:0.82rem;color:var(--gray);margin-bottom:1rem;">Blog posts are stored in your browser's localStorage. Export them for backup.</p>
+            <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+              <button class="btn btn-outline btn-sm" onclick="exportData()">Export Posts (JSON)</button>
+              <button class="btn btn-ghost btn-sm" onclick="importData()">Import Posts (JSON)</button>
+            </div>
+            <p style="font-size:0.72rem;color:rgba(224,90,90,0.8);margin-top:1rem;">⚠ Clearing browser data will delete all posts. Export regularly.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /admin-main -->
+  </div><!-- /admin-wrap -->
+</div><!-- /admin-panel -->
+
+<script src="shared.js"></script>
+<script>
+// ── CONSTANTS ──
+const PASS_KEY = 'tgr_admin_pass';
+const DEFAULT_PASS = 'tgr-admin-2025';
+let editingSlug = null;
+
+// ── LOGIN ──
+function doLogin() {
+  const pw = document.getElementById('admin-password').value;
+  const stored = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
+  const notice = document.getElementById('login-notice');
+  if (pw === stored) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    initAdmin();
+  } else {
+    notice.textContent = 'Incorrect password. Please try again.';
+    notice.classList.add('show');
+  }
+}
+
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('admin-password').value = '';
+}
+
+// ── INIT ──
+function initAdmin() {
+  renderDashboard();
+  // Set default date
+  document.getElementById('post-date').value = new Date().toISOString().split('T')[0];
+}
+
+// ── VIEWS ──
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const btn = document.getElementById('btn-' + name);
+  if (btn) btn.classList.add('active');
+
+  if (name === 'posts') renderPostList();
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'sitemap') renderSitemap();
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  const posts = getPosts();
+  const published = posts.filter(p => p.status === 'published');
+  const drafts = posts.filter(p => p.status === 'draft');
+  const cats = [...new Set(posts.map(p => p.category).filter(Boolean))];
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${published.length}</div><div class="stat-label">Published Posts</div></div>
+    <div class="stat-card"><div class="stat-num">${drafts.length}</div><div class="stat-label">Drafts</div></div>
+    <div class="stat-card"><div class="stat-num">${cats.length}</div><div class="stat-label">Categories Used</div></div>
+    <div class="stat-card"><div class="stat-num">${posts.length}</div><div class="stat-label">Total Posts</div></div>
+  `;
+
+  const recent = [...posts].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,5);
+  document.getElementById('recent-posts-list').innerHTML = recent.length
+    ? recent.map(p => postItemHTML(p)).join('')
+    : emptyState('No posts yet.', 'Click "New Post" to create your first article.');
+}
+
+// ── POST LIST ──
+function renderPostList() {
+  const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const cat = document.getElementById('cat-filter')?.value || '';
+  let posts = getPosts();
+  if (q) posts = posts.filter(p => p.title.toLowerCase().includes(q) || (p.excerpt||'').toLowerCase().includes(q));
+  if (cat) posts = posts.filter(p => p.category === cat);
+  posts.sort((a,b) => new Date(b.date) - new Date(a.date));
+  document.getElementById('posts-list').innerHTML = posts.length
+    ? posts.map(p => postItemHTML(p)).join('')
+    : emptyState('No posts found.', 'Try a different search or category filter.');
+}
+
+function postItemHTML(p) {
+  return `
+    <div class="post-item">
+      <div class="post-item-info">
+        <div class="post-item-title">${escHtml(p.title)}</div>
+        <div class="post-item-meta">
+          <span class="cat-badge">${escHtml(p.category||'Uncategorised')}</span>
+          <span>${p.date || 'No date'}</span>
+          <span style="color:${p.status==='published'?'var(--green)':'var(--gray)'}">● ${p.status||'draft'}</span>
+        </div>
+      </div>
+      <div class="post-actions">
+        <a href="blog-post.html?slug=${encodeURIComponent(p.slug)}" class="btn btn-ghost btn-sm" target="_blank">View</a>
+        <button class="btn btn-outline btn-sm" onclick="editPost('${p.slug}')">Edit</button>
+        <button class="btn btn-sm" style="background:rgba(224,90,90,0.1);color:var(--red);border:1px solid rgba(224,90,90,0.2);" onclick="deletePost('${p.slug}')">Delete</button>
+      </div>
+    </div>`;
+}
+
+function emptyState(h, p) {
+  return `<div class="empty-state"><div class="big-icon">📄</div><h3>${h}</h3><p>${p}</p></div>`;
+}
+
+// ── NEW / EDIT ──
+function newPost() {
+  editingSlug = null;
+  clearEditor();
+  document.getElementById('editor-title-heading').textContent = 'New Post';
+  document.getElementById('post-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('post-status').value = 'published';
+  showView('editor');
+  document.getElementById('btn-new').classList.add('active');
+}
+
+function editPost(slug) {
+  const post = getPost(slug);
+  if (!post) return;
+  editingSlug = slug;
+  document.getElementById('editor-title-heading').textContent = 'Edit Post';
+  document.getElementById('post-title').value = post.title || '';
+  document.getElementById('post-slug').value = post.slug || '';
+  document.getElementById('post-body').value = post.body || '';
+  document.getElementById('post-excerpt').value = post.excerpt || '';
+  document.getElementById('post-category').value = post.category || '';
+  document.getElementById('post-tags').value = (post.tags||[]).join(', ');
+  document.getElementById('post-image').value = post.image || '';
+  document.getElementById('post-date').value = post.date || '';
+  document.getElementById('post-status').value = post.status || 'published';
+  document.getElementById('post-seo-title').value = post.seoTitle || '';
+  document.getElementById('post-meta-desc').value = post.metaDesc || '';
+  showView('editor');
+}
+
+function clearEditor() {
+  ['post-title','post-slug','post-body','post-excerpt','post-tags','post-image','post-seo-title','post-meta-desc'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('post-category').value = '';
+  document.getElementById('post-status').value = 'published';
+  hideNotice('editor-notice');
+}
+
+// ── SAVE / PUBLISH ──
+function gatherPost(status) {
+  const title = document.getElementById('post-title').value.trim();
+  const body = document.getElementById('post-body').value.trim();
+  const excerpt = document.getElementById('post-excerpt').value.trim();
+  const category = document.getElementById('post-category').value;
+  if (!title) { showNotice('editor-notice', 'error', 'Post title is required.'); return null; }
+  if (!body) { showNotice('editor-notice', 'error', 'Post content is required.'); return null; }
+  if (!excerpt) { showNotice('editor-notice', 'error', 'Post excerpt is required.'); return null; }
+  if (!category) { showNotice('editor-notice', 'error', 'Please select a category.'); return null; }
+
+  let slug = document.getElementById('post-slug').value.trim() || slugify(title);
+  const posts = getPosts();
+  // Unique slug check
+  const existing = posts.find(p => p.slug === slug && p.slug !== editingSlug);
+  if (existing) slug = slug + '-' + Date.now();
+
+  return {
+    title,
+    slug,
+    body,
+    excerpt,
+    category,
+    tags: document.getElementById('post-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    image: document.getElementById('post-image').value.trim(),
+    date: document.getElementById('post-date').value || new Date().toISOString().split('T')[0],
+    status: status || document.getElementById('post-status').value,
+    seoTitle: document.getElementById('post-seo-title').value.trim(),
+    metaDesc: document.getElementById('post-meta-desc').value.trim(),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function publishPost() {
+  const post = gatherPost('published');
+  if (!post) return;
+  savePostObj(post);
+  showNotice('editor-notice', 'success', `"${post.title}" published successfully! <a href="blog-post.html?slug=${post.slug}" target="_blank" style="color:var(--gold);">View post →</a>`);
+  document.getElementById('post-slug').value = post.slug;
+  editingSlug = post.slug;
+}
+
+function saveDraft() {
+  const post = gatherPost('draft');
+  if (!post) return;
+  savePostObj(post);
+  showNotice('editor-notice', 'success', `Draft "${post.title}" saved.`);
+  editingSlug = post.slug;
+}
+
+function savePostObj(post) {
+  const posts = getPosts();
+  const idx = editingSlug ? posts.findIndex(p => p.slug === editingSlug) : -1;
+  if (idx >= 0) posts[idx] = post;
+  else posts.unshift(post);
+  savePosts(posts);
+}
+
+// ── DELETE ──
+function deletePost(slug) {
+  if (!confirm('Delete this post permanently? This cannot be undone.')) return;
+  savePosts(getPosts().filter(p => p.slug !== slug));
+  showNotice('posts-notice', 'success', 'Post deleted.');
+  renderPostList();
+  renderDashboard();
+}
+
+function deleteCurrentPost() {
+  if (!editingSlug) { alert('Save the post first before deleting.'); return; }
+  if (!confirm('Delete this post permanently?')) return;
+  savePosts(getPosts().filter(p => p.slug !== editingSlug));
+  showView('posts');
+}
+
+// ── PREVIEW ──
+function togglePreview() {
+  const write = document.getElementById('editor-write-mode');
+  const preview = document.getElementById('editor-preview-mode');
+  if (write.style.display === 'none') {
+    write.style.display = '';
+    preview.style.display = 'none';
+  } else {
+    const body = document.getElementById('post-body').value;
+    document.getElementById('preview-content').innerHTML = markdownToHtml(body);
+    write.style.display = 'none';
+    preview.style.display = 'block';
+  }
+}
+
+// ── TOOLBAR ──
+function fmt(cmd) {
+  const ta = document.getElementById('post-body');
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const sel = ta.value.substring(start, end);
+  const wrapper = cmd === 'bold' ? '**' : '*';
+  const replacement = wrapper + (sel || 'text') + wrapper;
+  ta.value = ta.value.substring(0, start) + replacement + ta.value.substring(end);
+  ta.focus();
+  ta.setSelectionRange(start + wrapper.length, start + wrapper.length + (sel||'text').length);
+}
+
+function insertHeading(level) {
+  const ta = document.getElementById('post-body');
+  const prefix = level === 'h2' ? '## ' : '### ';
+  insertAtCursor(ta, '\n' + prefix);
+}
+
+function insertList(type) {
+  const ta = document.getElementById('post-body');
+  const bullet = type === 'ul' ? '- ' : '1. ';
+  insertAtCursor(ta, '\n' + bullet);
+}
+
+function insertQuote() {
+  const ta = document.getElementById('post-body');
+  insertAtCursor(ta, '\n> ');
+}
+
+function insertLink() {
+  const url = prompt('Enter URL:');
+  if (!url) return;
+  const text = prompt('Enter link text:', 'link text') || 'link text';
+  const ta = document.getElementById('post-body');
+  insertAtCursor(ta, `[${text}](${url})`);
+}
+
+function insertHR() {
+  const ta = document.getElementById('post-body');
+  insertAtCursor(ta, '\n\n---\n\n');
+}
+
+function insertAtCursor(ta, text) {
+  const pos = ta.selectionStart;
+  ta.value = ta.value.substring(0, pos) + text + ta.value.substring(pos);
+  ta.focus();
+  ta.setSelectionRange(pos + text.length, pos + text.length);
+}
+
+// ── AUTO SLUG ──
+document.addEventListener('DOMContentLoaded', () => {
+  const titleEl = document.getElementById('post-title');
+  const slugEl = document.getElementById('post-slug');
+  if (titleEl && slugEl) {
+    titleEl.addEventListener('input', () => {
+      if (!editingSlug) slugEl.value = slugify(titleEl.value);
+    });
+  }
+});
+
+// ── SITEMAP ──
+function renderSitemap() {
+  const xml = generateSitemapXml();
+  document.getElementById('sitemap-preview').textContent = xml;
+}
+
+function generateSitemapXml() {
+  const posts = getPosts().filter(p => p.status === 'published');
+  const base = 'https://thegiantreach.com';
+  const today = new Date().toISOString().split('T')[0];
+  const staticPages = [
+    { loc: '/', priority: '1.0', freq: 'monthly', mod: today },
+    { loc: '/about.html', priority: '0.9', freq: 'monthly', mod: today },
+    { loc: '/services.html', priority: '0.9', freq: 'monthly', mod: today },
+    { loc: '/service-client-acquisition.html', priority: '0.8', freq: 'monthly', mod: today },
+    { loc: '/service-crm-setup.html', priority: '0.8', freq: 'monthly', mod: today },
+    { loc: '/service-lead-qualification.html', priority: '0.8', freq: 'monthly', mod: today },
+    { loc: '/service-analytics.html', priority: '0.8', freq: 'monthly', mod: today },
+    { loc: '/blog.html', priority: '0.8', freq: 'weekly', mod: today },
+    { loc: '/certifications.html', priority: '0.7', freq: 'monthly', mod: today },
+    { loc: '/contact.html', priority: '0.7', freq: 'monthly', mod: today },
+    { loc: '/privacy.html', priority: '0.3', freq: 'yearly', mod: today },
+  ];
+
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+  xml += `\n  <!-- STATIC PAGES -->\n`;
+  staticPages.forEach(p => {
+    xml += `  <url>\n    <loc>${base}${p.loc}</loc>\n    <lastmod>${p.mod}</lastmod>\n    <changefreq>${p.freq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>\n`;
+  });
+  xml += `\n  <!-- BLOG POSTS -->\n`;
+  posts.forEach(p => {
+    xml += `  <url>\n    <loc>${base}/blog-post.html?slug=${encodeURIComponent(p.slug)}</loc>\n    <lastmod>${p.date||today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`;
+  });
+  xml += `</urlset>`;
+  return xml;
+}
+
+function downloadSitemap() {
+  const xml = generateSitemapXml();
+  const blob = new Blob([xml], { type: 'application/xml' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sitemap.xml';
+  a.click();
+}
+
+// ── SETTINGS ──
+function changePassword() {
+  const cur = document.getElementById('cur-pw').value;
+  const newPw = document.getElementById('new-pw').value;
+  const confirm = document.getElementById('confirm-pw').value;
+  const stored = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
+  if (cur !== stored) { showNotice('pw-notice','error','Current password is incorrect.'); return; }
+  if (newPw.length < 6) { showNotice('pw-notice','error','New password must be at least 6 characters.'); return; }
+  if (newPw !== confirm) { showNotice('pw-notice','error','Passwords do not match.'); return; }
+  localStorage.setItem(PASS_KEY, newPw);
+  showNotice('pw-notice','success','Password updated successfully.');
+  ['cur-pw','new-pw','confirm-pw'].forEach(id => document.getElementById(id).value = '');
+}
+
+function exportData() {
+  const posts = getPosts();
+  const blob = new Blob([JSON.stringify(posts, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tgr-blog-posts-' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+}
+
+function importData() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const posts = JSON.parse(ev.target.result);
+        if (!Array.isArray(posts)) throw new Error('Invalid format');
+        if (!confirm(`Import ${posts.length} posts? This will REPLACE all existing posts.`)) return;
+        savePosts(posts);
+        renderDashboard();
+        alert('Import successful!');
+      } catch(err) {
+        alert('Error importing: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ── UTILS ──
+function slugify(str) {
+  return str.toLowerCase()
+    .replace(/[^a-z0-9\s-]/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-')
+    .slice(0, 80);
+}
+
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+function showNotice(id, type, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'notice ' + type + ' show';
+  el.innerHTML = msg;
+  if (type === 'success') setTimeout(() => hideNotice(id), 5000);
+}
+
+function hideNotice(id) {
+  const el = document.getElementById(id);
+  if (el) el.className = 'notice';
+}
+
+// ── MARKDOWN TO HTML ──
+function markdownToHtml(md) {
+  if (!md) return '';
+  let html = md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>')
+    .replace(/^---$/gm,'<hr>')
+    .replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2" style="color:var(--gold);">$1</a>')
+    .replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/^(\d+)\. (.+)$/gm,'<li>$2</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
+    .replace(/\n{2,}/g,'</p><p>')
+    .replace(/\n/g,'<br>');
+  return `<p>${html}</p>`.replace(/<p><\/p>/g,'').replace(/<p>(<h[1-6]>)/g,'$1').replace(/(<\/h[1-6]>)<\/p>/g,'$1').replace(/<p>(<ul>)/g,'$1').replace(/(<\/ul>)<\/p>/g,'$1').replace(/<p>(<blockquote>)/g,'$1').replace(/(<\/blockquote>)<\/p>/g,'$1').replace(/<p>(<hr>)<\/p>/g,'$1');
+}
+</script>
+</body>
+</html>

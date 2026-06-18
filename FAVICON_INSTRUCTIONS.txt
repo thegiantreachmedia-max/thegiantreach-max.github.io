@@ -1,0 +1,8 @@
+<!-- 
+  FAVICON NOTE FOR DEPLOYMENT:
+  Upload your logo image as "favicon.webp" to your site root.
+  The favicon.webp referenced below is your new logo icon.
+  
+  Also create favicon.ico by converting favicon.webp at:
+  https://favicon.io/favicon-converter/
+-->

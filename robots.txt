@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Block admin panel from indexing
+Disallow: /admin.html
+
+# Sitemap location
+Sitemap: https://thegiantreach.com/sitemap.xml
+
+# Crawl-delay for polite bots
+Crawl-delay: 1
