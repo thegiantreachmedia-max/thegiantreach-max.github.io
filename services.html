@@ -70,7 +70,7 @@
 .compare-cell .no { color:rgba(224,90,90,0.6); }
 .compare-row:nth-child(even) { background:rgba(201,168,76,0.02); }
 
-.who-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-top:2rem; }
+.who-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.2rem; margin-top:2rem; }
 .who-pill { border:1px solid rgba(201,168,76,0.12); padding:1.4rem; background:var(--navy-mid); text-align:center; }
 .who-icon { font-size:1.8rem; margin-bottom:0.6rem; }
 .who-title { font-size:0.85rem; font-weight:500; color:var(--white); }
@@ -78,7 +78,7 @@
 @media (max-width:800px) {
   .services-hero-grid { grid-template-columns:1fr; gap:3rem; }
   .svc-full-card { grid-template-columns:60px 1fr; }
-  .who-grid { grid-template-columns:1fr 1fr; }
+  .who-grid { grid-template-columns:repeat(2,1fr) !important; }
   .compare-row { grid-template-columns:140px 1fr 1fr; }
 }
 @media (max-width:560px) {
@@ -136,7 +136,7 @@
       <div>
         <div style="border:1px solid rgba(201,168,76,0.15);padding:2rem;background:var(--navy-mid);">
           <div style="font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;">Who These Services Are For</div>
-          <div class="who-grid" style="margin-top:0;grid-template-columns:repeat(2,1fr);">
+          <div class="who-grid" style="margin-top:0;">
             <div class="who-pill"><div class="who-icon">🛂</div><div class="who-title">Immigration Agencies</div></div>
             <div class="who-pill"><div class="who-icon">📋</div><div class="who-title">Visa Consultants</div></div>
             <div class="who-pill"><div class="who-icon">🎓</div><div class="who-title">Study Abroad Agencies</div></div>
