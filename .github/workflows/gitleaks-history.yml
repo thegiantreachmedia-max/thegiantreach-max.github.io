@@ -24,4 +24,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_ENABLE_COMMENTS: "false"
       - name: Scan all reachable Git history
+        continue-on-error: true
         run: gitleaks git --redact --exit-code 2 --report-format json --report-path "$RUNNER_TEMP/gitleaks-full-history.json" --log-opts="--all"
+      - name: Print redacted finding metadata
+        if: always()
+        run: |
+          node -e 'const fs=require("fs"); const p=process.env.REPORT; if(!fs.existsSync(p)){console.log("No Gitleaks report was produced."); process.exit(0)} const rows=JSON.parse(fs.readFileSync(p,"utf8")); const safe=rows.map(x=>({rule:x.RuleID||x.rule,file:x.File||x.file,line:x.StartLine||x.startLine,commit:x.Commit||x.commit})); console.log(JSON.stringify(safe,null,2)); if(rows.length) process.exit(1);'
+        env:
+          REPORT: ${{ runner.temp }}/gitleaks-full-history.json
